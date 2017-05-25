@@ -28,15 +28,14 @@
 				BackgroundColor="White"
 				Padding="10, 10, 10, 10"
 				Margin="20, 15, 20, 0">
-			<StackLayout >
+			<StackLayout VerticalOptions="Center">
 				<StackLayout.GestureRecognizers>
 			        <TapGestureRecognizer Tapped="OnTappedDispatch"/>
 			    </StackLayout.GestureRecognizers>
                 <Image Source="dispatch.png"/>
                 <Label Text="DISPATCH"
-					VerticalOptions="EndAndExpand"
-					HorizontalOptions="Center"
 		           	Font="Large"
+						Margin="0,20,0,0"
 					HorizontalTextAlignment="Center"/>
         	</StackLayout>
 		</Frame>
@@ -47,15 +46,14 @@
 				BackgroundColor="White"
 				Padding="10, 10, 10, 10"
 				Margin="20, 0, 20, 20">
-			<StackLayout>
+			<StackLayout VerticalOptions="Center">
 				<StackLayout.GestureRecognizers>
 			        <TapGestureRecognizer Tapped="OnTappedReceive"/>
 			    </StackLayout.GestureRecognizers>
                 <Image Source="receive.png"/>
                 <Label Text="RECEIVE"
-					VerticalOptions="EndAndExpand"
-					HorizontalOptions="Center"
 		           	Font="Large"
+						Margin="0,20,0,0"
 					HorizontalTextAlignment="Center"/>
         	</StackLayout>
 		</Frame>

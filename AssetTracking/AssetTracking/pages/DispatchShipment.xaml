@@ -50,11 +50,10 @@
 						<Grid.GestureRecognizers>
 				        	<TapGestureRecognizer Tapped="OnTappedLink"></TapGestureRecognizer>
 						</Grid.GestureRecognizers>
-						<Image
-							Source="step_grey.png"/>
+						<Image Source="step_grey.png"/>
 						<StackLayout VerticalOptions="Center">
 						<Image Source = "link.png"/>
-							<Label Text="Link" HorizontalOptions="Center" />
+							<Label Text="Link" HorizontalOptions="Center" FontSize="15"/>
 						</StackLayout>
 
 					</Grid>
@@ -63,11 +62,10 @@
 						<Grid.GestureRecognizers>
 				        	<TapGestureRecognizer Tapped="OnTappedScanShipment"></TapGestureRecognizer>
 						</Grid.GestureRecognizers>
-						<Image
-							Source="step_grey.png"/>
+						<Image Source="step_grey.png"/>
 						<StackLayout VerticalOptions="Center">
-						<Image Source = "barcode.png"/>
-						<Label Text="Scan Shipment" HorizontalOptions="Center" />
+						<Image Source = "scan_barcode.png"/>
+						<Label Text="Scan Shipment" HorizontalOptions="Center" FontSize="15"/>
 						</StackLayout>
 					</Grid>
 					<Grid Grid.Column="0" VerticalOptions="Start"
@@ -75,11 +73,10 @@
 						<Grid.GestureRecognizers>
 				        	<TapGestureRecognizer Tapped="OnTappedScanSensor"></TapGestureRecognizer>
 						</Grid.GestureRecognizers>
-						<Image
-							Source="step_grey.png"/>
+						<Image Source="step_grey.png"/>
 						<StackLayout VerticalOptions="Center" >
 						<Image Source = "scan_sensor_green.png"/>
-						<Label Text="Scan Sensor" HorizontalOptions="Center" />
+						<Label Text="Scan Sensor" HorizontalOptions="Center" FontSize="15" TextColor="#229f7c"/>
 							</StackLayout>
 					</Grid>
 				</Grid>
@@ -89,8 +86,8 @@
 						VerticalOptions="FillAndExpand">
 					<Label x:Name="ContailerLayoutLabel"
 						Text="Scan the Sensor's QR Code"
-						HeightRequest="60"
-						VerticalOptions="Center"
+						HeightRequest="50"
+							Margin="0,25,0,0"
 						HorizontalOptions="CenterAndExpand"/>
 
 					<StackLayout 
