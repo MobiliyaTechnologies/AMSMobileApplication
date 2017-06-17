@@ -1,190 +1,392 @@
-﻿using System;
+﻿using AssetTracking.Managers;
+using AssetTracking.Models;
+using AssetTracking.pages;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-
+using System.Threading.Tasks;
 using Xamarin.Forms;
 using ZXing.Net.Mobile.Forms;
 
 namespace AssetTracking
 {
-	public partial class DispatchShipment : ContentPage
-	{
-		ZXingScannerView zxingView;
-		bool stepScanSensor = true;
-		bool stepScanShipment = false;
-		bool stepLink = false;
-		string sensorId = null;
-		string shipmentId = null;
+    public partial class DispatchShipment : ContentPage
+    {
+        ZXingScannerView zxingView;
+        bool stepScanSensor = true;
+        bool stepScanShipment = false;
+        bool stepLink = false;
+        string sensorId = null;
+        string shipmentId = null;
 
-		public DispatchShipment()
-		{
-			InitializeComponent();
-			ContainerLinking.IsVisible = true;
-			ContainerLinked.IsVisible = false;
-			ScanCode();
-		}
+        public DispatchShipment()
+        {
+            InitializeComponent();
+            ContainerLayoutScanner.IsVisible = true;
+            DispatchLayoutScanner.IsVisible = true;
+            ContainerLinking.IsVisible = true;
+            ContainerLinked.IsVisible = false;
+            ScanCode();
+        }
 
-		async void OnTappedLink(object sender, EventArgs args)
-		{
-			await DisplayAlert("Clicked!", "Do you want to link?", "OK");
-		}
+        async void OnTappedLink(object sender, EventArgs args)
+        {
+            await DisplayAlert("Clicked!", "Do you want to link?", "OK");
+        }
 
-		async void OnTappedScanShipment(object sender, EventArgs args)
-		{
-			await DisplayAlert("Clicked!", "Do you want to scan shipment?", "OK");
-		}
+        async void OnTappedScanShipment(object sender, EventArgs args)
+        {
+            await DisplayAlert("Clicked!", "Do you want to scan shipment?", "OK");
+        }
 
-		async void OnTappedScanSensor(object sender, EventArgs args)
-		{
-			await DisplayAlert("Clicked!", "Do you want to Scan Sensor?", "OK");
-		}
+        async void OnTappedScanSensor(object sender, EventArgs args)
+        {
+            await DisplayAlert("Clicked!", "Do you want to Scan Sensor?", "OK");
+        }
 
-		void ScanCode() {
-			if (stepScanSensor || zxingView == null)
-			{
-				ImageScanSensor.Source = "scan_sensor_green.png";
-				ImageScanShipment.Source = "scan_barcode.png";
-				ImageLink.Source = "link.png";
-				textScanSensor.TextColor = Color.FromHex("229f7c");
-				textScanShipment.TextColor = Color.FromHex("2a3129");
-				textLink.TextColor = Color.FromHex("2a3129");
-				ContailerLayoutLabel.Text = "Scan Sensor's QR Code";
-				zxingView = new ZXingScannerView
-				{
-					HorizontalOptions = LayoutOptions.FillAndExpand,
-					VerticalOptions = LayoutOptions.FillAndExpand,
-					AutomationId = "zxingScannerView",
-				};
-				zxingView.OnScanResult += (result) =>
-				{
-					// Stop scanning
-					//zxingView.IsScanning = false;
+        void ScanCode()
+        {
+            ContainerScanningSteps.IsVisible = true;
 
-					// Pop the page and show the result
-					Device.BeginInvokeOnMainThread(() =>
-						{
-						//Navigation.PopModalAsync();
-						//DisplayAlert("Scanned Barcode", result.Text, "OK");
+            if (stepScanSensor || zxingView == null)
+            {
 
-						zxingView.IsEnabled = false;
-							showScannedData(result.Text);
-						});
-				};
+                ImageScanSensor.Source = "scan_sensor_green.png";
+                ImageScanShipment.Source = "scan_barcode.png";
+                ImageLink.Source = "link.png";
+                textScanSensor.TextColor = Color.FromHex("229f7c");
+                textScanShipment.TextColor = Color.FromHex("2a3129");
+                textLink.TextColor = Color.FromHex("2a3129");
+                ContailerLayoutLabel.Text = "Scan Sensor's QR Code";
+                zxingView = new ZXingScannerView
+                {
+                    HorizontalOptions = LayoutOptions.FillAndExpand,
+                    VerticalOptions = LayoutOptions.FillAndExpand,
+                    AutomationId = "zxingScannerView",
+                };
+                zxingView.AutoFocus();
+                zxingView.BackgroundColor = Color.White;
+                zxingView.OnScanResult += ZxingView_OnScanResult;
 
-				ScannerLayout.Children.Add(zxingView);
-			}
-			else if (stepScanShipment) 
-			{
-				ImageScanSensor.Source = "checkmark.png";
-				ImageScanShipment.Source = "scan_barcode_green.png";
-				ImageLink.Source = "link.png";
-				textScanSensor.TextColor = Color.FromHex("2a3129");
-				textScanShipment.TextColor = Color.FromHex("229f7c");
-				textLink.TextColor = Color.FromHex("2a3129"); 
-				ContailerLayoutLabel.Text = "Scan Shipment's Barcode";
-			}
-			ContainerLayoutDetails.IsVisible = false;
-			ContainerLayoutLink.IsVisible = false;
-			ContainerLayoutScanner.IsVisible = true;
+                ScannerLayout.Children.Add(zxingView);
+            }
+            else if (stepScanShipment)
+            {
+                ImageScanSensor.Source = "checkmark.png";
+                ImageScanShipment.Source = "scan_barcode_green.png";
+                ImageLink.Source = "link.png";
+                textScanSensor.TextColor = Color.FromHex("2a3129");
+                textScanShipment.TextColor = Color.FromHex("229f7c");
+                textLink.TextColor = Color.FromHex("2a3129");
+                ContailerLayoutLabel.Text = "Scan Shipment's Barcode";
+            }
+            ContainerLayoutDetails.IsVisible = false;
+            ContainerLayoutLink.IsVisible = false;
+            ContainerLayoutScanner.IsVisible = true;
 
-			zxingView.IsEnabled = true;
+            zxingView.IsEnabled = true;
 
-		}
+        }
 
-		void showScannedData(string data)
-		{
-			if (stepScanSensor)
-			{
-				sensorId = data;
-				SensorID.Text = data;
-				detailImage.Source = "qr_scanned.png";
-				SensorDetails.IsVisible = true;
-				ShipmentDetails.IsVisible = false;
-				ContainerLayoutScanner.IsVisible = false;
-				ContainerLayoutDetails.IsVisible = true;
-				ContainerLayoutLink.IsVisible = false;
 
-			}
-			else if (stepScanShipment)
-			{
-				shipmentId = data;
-				ShipmentId.Text = data;
-				detailImage.Source = "barcode_scanned.png";
-				SensorDetails.IsVisible = false;
-				ShipmentDetails.IsVisible = true;
-				ContainerLayoutScanner.IsVisible = false;
-				ContainerLayoutDetails.IsVisible = true;
-				ContainerLayoutLink.IsVisible = false;
-			}
-			else if (stepLink) 
-			{
-				ImageScanSensor.Source = "checkmark.png";
-				ImageScanShipment.Source = "checkmark.png";
-				ImageLink.Source = "link_green.png";
-				textScanSensor.TextColor = Color.FromHex("2a3129");
-				textScanShipment.TextColor = Color.FromHex("2a3129");
-				textLink.TextColor = Color.FromHex("229f7c");
 
-				SensorDetails.IsVisible = false;
-				ShipmentDetails.IsVisible = false;
-				ContainerLayoutScanner.IsVisible = false;
-				ContainerLayoutDetails.IsVisible = false;
-				ContainerLayoutLink.IsVisible = true;
-				
-			}
+        private void ZxingView_OnScanResult(ZXing.Result result)
+        {
 
-		}
+            // Stop scanning
+            //zxingView.IsScanning = false;
 
-		protected override void OnAppearing()
-		{
-			base.OnAppearing();
+            // Pop the page and show the result
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                //Navigation.PopModalAsync();
+                //DisplayAlert("Scanned Barcode", result.Text, "OK");
 
-			zxingView.IsScanning = true;
-		}
+                zxingView.IsEnabled = false;
+                showScannedData(result.Text);
+            });
+            zxingView.OnScanResult -= ZxingView_OnScanResult;
 
-		protected override void OnDisappearing()
-		{
-			zxingView.IsScanning = false;
+        }
 
-			base.OnDisappearing();
-		}
+        void showScannedData(string data)
+        {
+            if (stepScanSensor)
+            {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    Loader.IsVisible = true;
+                });
+                string sensorType = null;
+                Dictionary<HttpManager.LinkDeviceResponse, string> sensorDetails = null;
+                Task.Run(async() => {
+                     sensorDetails = await GetSensorDetailsFromServer(data);
+                }).Wait();
 
-		void Next(object sender, EventArgs args)
-		{
-			//await DisplayAlert("Clicked!", "Do you want to go Next?", "OK");
-			if (stepScanSensor)
-			{
-				stepScanSensor = false;
-				stepScanShipment = true;
-				stepLink = false;
-				ScanCode();
-			}
-			else if (stepScanShipment)
-			{
-				stepScanSensor = false;
-				stepScanShipment = false;
-				stepLink = true;
-				showScannedData(null);
-			}
-		}
+                sensorType = GetSensorType(sensorDetails);
 
-		async void Back(object sender, EventArgs args)
-		{
-			//await DisplayAlert("Clicked!", "Do you want to go Next?", "OK");
-			await Navigation.PopModalAsync();
-		}
+               
 
-		void Link(object sender, EventArgs args)
-		{
+                if (sensorType == null)
+                {
+                    App.Current.MainPage = new AssetTrackingPage();
+                    return;
+                }
+                else if (sensorType == "")
+                {
+                    return;
+                }
 
-			ContainerLinking.IsVisible = false;
-			ContainerLinked.IsVisible = true;
-			//await DisplayAlert("Clicked!", "Do you want Link Sensor and Shipment?", "OK");
-		}
+                ContainerScanningSteps.IsVisible = false;
+                sensorId = data;
+                SensorID.Text = data;
+                SensorType.Text = sensorType;
+                detailImage.Source = "qr_scanned.png";
+                SensorDetails.IsVisible = true;
+                ShipmentDetails.IsVisible = false;
+                ContainerLayoutScanner.IsVisible = false;
+                ContainerLayoutDetails.IsVisible = true;
+                ContainerLayoutLink.IsVisible = false;
+                DispatchTitle.Text = "Sensor Details";
 
-		async void Done(object sender, EventArgs args)
-		{
-			//await DisplayAlert("Clicked!", "Do you want to go Next?", "OK");
-			await Navigation.PopModalAsync();
-		}
-	}
+            }
+            else if (stepScanShipment)
+            {
+                ContainerScanningSteps.IsVisible = false;
+                shipmentId = data;
+                ShipmentId.Text = data;
+                detailImage.Source = "barcode_scanned.png";
+                SensorDetails.IsVisible = false;
+                ShipmentDetails.IsVisible = true;
+                ContainerLayoutScanner.IsVisible = false;
+                ContainerLayoutDetails.IsVisible = true;
+                ContainerLayoutLink.IsVisible = false;
+                DispatchTitle.Text = "Shipment Details";
+            }
+            else if (stepLink)
+            {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    ContainerScanningSteps.IsVisible = true;
+                    //ImageScanSensor.Source = "checkmark.png";
+                    ImageScanShipment.Source = "checkmark.png";
+                    ImageLink.Source = "link_green.png";
+                    //textScanSensor.TextColor = Color.FromHex("2a3129");
+                    textScanShipment.TextColor = Color.FromHex("2a3129");
+                    textLink.TextColor = Color.FromHex("229f7c");
+
+                    SensorDetails.IsVisible = false;
+                    ShipmentDetails.IsVisible = false;
+                    ContainerLayoutScanner.IsVisible = false;
+                    ContainerLayoutDetails.IsVisible = false;
+                    ContainerLayoutLink.IsVisible = true;
+                });
+
+            }
+
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+
+            zxingView.IsScanning = true;
+        }
+
+        protected override void OnDisappearing()
+        {
+            if (zxingView != null)
+            {
+                zxingView.IsScanning = false;
+            }
+
+
+            base.OnDisappearing();
+        }
+
+        void Next(object sender, EventArgs args)
+        {
+
+            //await DisplayAlert("Clicked!", "Do you want to go Next?", "OK");
+            if (stepScanSensor)
+            {
+
+                stepScanSensor = false;
+                stepScanShipment = true;
+                DispatchTitle.Text = "Scan Shipment";
+                stepLink = false;
+                zxingView.OnScanResult += ZxingView_OnScanResult;
+                ScanCode();
+            }
+            else if (stepScanShipment)
+            {
+                stepScanSensor = false;
+                stepScanShipment = false;
+                stepLink = true;
+                DispatchTitle.Text = "Link";
+                zxingView.IsEnabled = false;
+                zxingView.IsScanning = false;
+                ScannerLayout.Children.Remove(zxingView);
+                zxingView = null;
+
+
+                showScannedData(null);
+            }
+        }
+
+        async void Back(object sender, EventArgs args)
+        {
+            //await DisplayAlert("Clicked!", "Do you want to go Next?", "OK");
+            await Navigation.PopModalAsync();
+        }
+
+        void Link(object sender, EventArgs args)
+        {
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                Loader.IsVisible = true;
+            });
+            Task.Run(async () =>
+            {
+                if (string.IsNullOrWhiteSpace(sensorId))
+                {
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        Loader.IsVisible = false;
+                        DisplayAlert("Error Occured !!", "Invalid Sensor", "OK");
+                    });
+                }
+                else if (string.IsNullOrWhiteSpace(shipmentId))
+                {
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        Loader.IsVisible = false;
+                        DisplayAlert("Error Occured !!", "Invalid Shipment", "OK");
+                    });
+                }
+                else
+                {
+                    LinkInfoModel requestModel = new LinkInfoModel() { AssetBarcode = shipmentId, SensorKey = sensorId };
+                    string jsonRequestData = JsonConvert.SerializeObject(requestModel);
+                    HttpManager.LinkDeviceResponse linkResponse = await HttpManager.GetInstance().LinkDevice(jsonRequestData);
+                    if (linkResponse == HttpManager.LinkDeviceResponse.Success)
+                    {
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            Loader.IsVisible = false;
+                            ContainerLinking.IsVisible = false;
+                            ContainerLinked.IsVisible = true;
+                        });
+                    }
+                    else if (linkResponse == HttpManager.LinkDeviceResponse.IdFailure)
+                    {
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            Loader.IsVisible = false;
+                            DisplayAlert("Error Occured !!", "This sensor is not registered with us.", "OK");
+                        });
+                    }
+                    else if (linkResponse == HttpManager.LinkDeviceResponse.ProcessError)
+                    {
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            Loader.IsVisible = false;
+                            DisplayAlert("Error Occured !!", "Error while processing your request.", "OK");
+                        });
+                    }
+                    else if (linkResponse == HttpManager.LinkDeviceResponse.UnAuthorize)
+                    {
+                        Device.BeginInvokeOnMainThread(async () =>
+                        {
+                            Loader.IsVisible = false;
+                            bool action = await DisplayAlert("Un-Authorized !!", "Would you like to Sign-in again ?", "OK", "Cancel");
+                            if (action)
+                            {
+                                App.Current.MainPage = new LoginPage();
+                            }
+                        });
+
+                    }
+                    else if (linkResponse == HttpManager.LinkDeviceResponse.NetworkException)
+                    {
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            Loader.IsVisible = false;
+                            DisplayAlert("Network Error !!", "Check your connection and Try Again.", "OK");
+                        });
+                    }
+                }
+            });
+
+
+        }
+
+        async void Done(object sender, EventArgs args)
+        {
+            //await DisplayAlert("Clicked!", "Do you want to go Next?", "OK");
+            await Navigation.PopModalAsync();
+        }
+
+        async Task<Dictionary<HttpManager.LinkDeviceResponse, string>> GetSensorDetailsFromServer(string sensorId)
+        {
+            Dictionary<HttpManager.LinkDeviceResponse, string> typeResponse = await HttpManager.GetInstance().GetSensorTypeFromID(sensorId);
+            return typeResponse;
+        }
+
+         string GetSensorType(Dictionary<HttpManager.LinkDeviceResponse, string> typeResponse)
+        {
+            string sensorType = null;
+           
+            if (typeResponse.ContainsKey(HttpManager.LinkDeviceResponse.Success))
+            {
+                
+                typeResponse.TryGetValue(HttpManager.LinkDeviceResponse.Success, out sensorType);
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    Loader.IsVisible = false;
+                   
+                });
+            }
+            else if (typeResponse.ContainsKey(HttpManager.LinkDeviceResponse.IdFailure))
+            {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    Loader.IsVisible = false;
+                    DisplayAlert("Error Occured !!", "This sensor is not registered with us.", "OK");
+                });
+            }
+            else if (typeResponse.ContainsKey(HttpManager.LinkDeviceResponse.ProcessError))
+            {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    Loader.IsVisible = false;
+                    DisplayAlert("Error Occured !!", "Error while processing your request.", "OK");
+                });
+            }
+            else if (typeResponse.ContainsKey(HttpManager.LinkDeviceResponse.UnAuthorize))
+            {
+                Device.BeginInvokeOnMainThread(async () =>
+                {
+                    Loader.IsVisible = false;
+                    bool action = await DisplayAlert("Un-Authorized !!", "Would you like to Sign-in again ?", "OK", "Cancel");
+                    if (action)
+                    {
+                        App.Current.MainPage = new LoginPage();
+                        sensorType = "";
+                    }
+                });
+
+            }
+            else if (typeResponse.ContainsKey(HttpManager.LinkDeviceResponse.NetworkException))
+            {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    Loader.IsVisible = false;
+                    DisplayAlert("Network Error !!", "Check your connection and Try Again.", "OK");
+                });
+            }
+            return sensorType;
+        }
+
+    }
 }
