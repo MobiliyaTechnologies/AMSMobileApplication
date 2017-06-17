@@ -268,8 +268,8 @@ namespace AssetTracking
                 {
                     LinkInfoModel requestModel = new LinkInfoModel() { AssetBarcode = shipmentId, SensorKey = sensorId };
                     string jsonRequestData = JsonConvert.SerializeObject(requestModel);
-                    HttpManager.LinkDeviceResponse linkResponse = await HttpManager.GetInstance().LinkDevice(jsonRequestData);
-                    if (linkResponse == HttpManager.LinkDeviceResponse.Success)
+                    Dictionary<HttpManager.LinkDeviceResponse, string> linkResponse = await HttpManager.GetInstance().LinkDevice(jsonRequestData);
+                    if (linkResponse.ContainsKey(HttpManager.LinkDeviceResponse.Success))
                     {
                         Device.BeginInvokeOnMainThread(() =>
                         {
@@ -278,7 +278,7 @@ namespace AssetTracking
                             ContainerLinked.IsVisible = true;
                         });
                     }
-                    else if (linkResponse == HttpManager.LinkDeviceResponse.IdFailure)
+                    else if (linkResponse.ContainsKey(HttpManager.LinkDeviceResponse.IdFailure))
                     {
                         Device.BeginInvokeOnMainThread(() =>
                         {
@@ -286,15 +286,25 @@ namespace AssetTracking
                             DisplayAlert("Error Occured !!", "This sensor is not registered with us.", "OK");
                         });
                     }
-                    else if (linkResponse == HttpManager.LinkDeviceResponse.ProcessError)
+                    else if (linkResponse.ContainsKey(HttpManager.LinkDeviceResponse.ProcessError))
                     {
                         Device.BeginInvokeOnMainThread(() =>
                         {
                             Loader.IsVisible = false;
-                            DisplayAlert("Error Occured !!", "Error while processing your request.", "OK");
+                            string responseMsg = null;
+                            linkResponse.TryGetValue(HttpManager.LinkDeviceResponse.ProcessError, out responseMsg);
+                            if(responseMsg !=null)
+                            {
+                                DisplayAlert("Error Occured !!", responseMsg, "OK");
+                            }
+                            else
+                            {
+                                DisplayAlert("Error Occured !!", "Error while processing your request.", "OK");
+                            }
+                            
                         });
                     }
-                    else if (linkResponse == HttpManager.LinkDeviceResponse.UnAuthorize)
+                    else if (linkResponse.ContainsKey(HttpManager.LinkDeviceResponse.UnAuthorize))
                     {
                         Device.BeginInvokeOnMainThread(async () =>
                         {
@@ -307,7 +317,7 @@ namespace AssetTracking
                         });
 
                     }
-                    else if (linkResponse == HttpManager.LinkDeviceResponse.NetworkException)
+                    else if (linkResponse.ContainsKey(HttpManager.LinkDeviceResponse.NetworkException))
                     {
                         Device.BeginInvokeOnMainThread(() =>
                         {
