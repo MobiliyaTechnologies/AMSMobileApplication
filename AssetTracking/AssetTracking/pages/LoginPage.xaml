@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AssetTracking.pages.LoginPage">
+    <Grid>
+    <!--<Grid x:Name="LoginPageView" IsVisible="True">
+           <StackLayout Orientation="Vertical" Margin="10" HorizontalOptions="CenterAndExpand">
+            <Entry x:Name="email" WidthRequest="250" Text="johndoe@gmail.com" Margin="10,0,10,0"  Placeholder="Username"  TextColor="#5E5E5E"  Keyboard="Email" FontSize="14"   />
+            <Entry  Text="12345" WidthRequest="250" x:Name="pwd" Margin="10,5,10,0" Placeholder="Password"  TextColor="#5E5E5E" IsPassword="True"  FontSize="14"  />
+            <Button Margin="0,5,0,0" Clicked="signIn_Clicked" WidthRequest="250" Text="Sign In"  BackgroundColor="#018149" BorderColor="#018149" BorderWidth="15" BorderRadius="10" TextColor="White">
+            </Button>
+
+           <Label Text="Dont have an account?"  Margin="10,10,10,0" TextColor="Black" HorizontalOptions="CenterAndExpand" />
+            <Label Text="Sign up" TextColor="#018149"  FontSize="Medium" HorizontalOptions="CenterAndExpand"/>
+        </StackLayout>
+    </Grid>-->
+    <Grid x:Name="LoginWebView" IsVisible="False">
+        <WebView x:Name="Browser" />
+            <ActivityIndicator x:Name="Loader" IsRunning="True" IsVisible="True" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"                           
+                           Color="Black" />
+        </Grid>
+    </Grid>
+</ContentPage>

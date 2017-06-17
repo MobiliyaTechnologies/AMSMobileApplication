@@ -26,7 +26,7 @@
 	</style>
 	<!-- Theme for Splash Screen -->
 	<style name="splashscreen" parent="Theme.AppCompat.Light.NoActionBar">
-	    <item name="android:windowBackground">@drawable/splash_screen</item>
+	    <item name="android:windowBackground">@drawable/splash</item>
 	    <item name="android:windowNoTitle">true</item>
 	    <item name="android:windowIsTranslucent">false</item>
 	    <item name="android:windowIsFloating">false</item>
