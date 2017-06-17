@@ -13,23 +13,24 @@ using Xamarin.Forms.Xaml;
 
 namespace AssetTracking.pages
 {
-	[XamlCompilation(XamlCompilationOptions.Compile)]
-	public partial class LoginPage : ContentPage
-	{
-		public LoginPage ()
-		{
-			InitializeComponent ();
-            
-                //LoginPageView.IsVisible = false;
-                LoginWebView.IsVisible = true;
-                Browser.Navigated += Browser_Navigated;
-                Browser.Navigating += Browser_Navigating;
-                Browser.Source = Constants.B2C_AAD_INSTANCE;
-           
+    [XamlCompilation(XamlCompilationOptions.Compile)]
+    public partial class LoginPage : ContentPage
+    {
+        public LoginPage()
+        {
+            InitializeComponent();
+
+            //LoginPageView.IsVisible = false;
+            LoginWebView.IsVisible = true;
+            Browser.Navigated += Browser_Navigated;
+            Browser.Navigating += Browser_Navigating;
+            string aadInstance = B2CConfigManager.GetInstance().GetB2CAADInstanceUrl();
+            Browser.Source = aadInstance;
+
         }
         private void signIn_Clicked(object sender, EventArgs e)
         {
-           
+
 
             //R  Navigation.PushAsync(new NavigationPage(new MainPage()));
             //App.Current.MainPage = new AssetTrackingPage();
@@ -44,18 +45,18 @@ namespace AssetTracking.pages
         }
 
         private async void Browser_Navigated(object sender, WebNavigatedEventArgs e)
-        {
-            
+        {           
+
             if (e.Url.Contains("&code="))
             {
                 string accessCode = Utility.GetAccessTokenfromQueryString(e.Url, "code");
-                
+
 
                 string responseData = await HttpManager.GetInstance().AuthenticateToken(accessCode);
-                if(!string.IsNullOrEmpty(responseData))
+                if (!string.IsNullOrEmpty(responseData))
                 {
-                    Application.Current.Properties[Constants.APP_SETTINGS_ACCESS_TOKEN_KEY]  = JsonConvert.DeserializeObject<AccessToken>(responseData).id_token;
-                    if(string.IsNullOrEmpty(Application.Current.Properties[Constants.APP_SETTINGS_ACCESS_TOKEN_KEY].ToString()))
+                    Application.Current.Properties[Constants.APP_SETTINGS_ACCESS_TOKEN_KEY] = JsonConvert.DeserializeObject<AccessToken>(responseData).id_token;
+                    if (string.IsNullOrEmpty(Application.Current.Properties[Constants.APP_SETTINGS_ACCESS_TOKEN_KEY].ToString()))
                     {
                         Device.BeginInvokeOnMainThread(() =>
                         {
