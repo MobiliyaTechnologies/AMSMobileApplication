@@ -28,10 +28,9 @@ namespace AssetTracking.Managers
             }
             return _instance;
         }
+        
 
-        string Base_Address = Constants.API_BASE_ADDRESS;
-
-        public enum LinkDeviceResponse { IdFailure, Success, UnAuthorize, NetworkException,ProcessError };
+        public enum LinkDeviceResponse { IdFailure, Success, UnAuthorize, NetworkException, ProcessError };
 
         public async Task<Dictionary<LinkDeviceResponse, string>> LinkDevice(string jsonData)
         {
@@ -42,7 +41,7 @@ namespace AssetTracking.Managers
 
                 using (var client = new HttpClient())
                 {
-                    client.BaseAddress = new Uri(Base_Address);
+                    client.BaseAddress = new Uri(Application.Current.Properties[Constants.APP_DOMAIN_URL_KEY].ToString());
 
                     var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
                     client.DefaultRequestHeaders.Add("Authorization", "Bearer " + Application.Current.Properties[Constants.APP_SETTINGS_ACCESS_TOKEN_KEY].ToString());
@@ -68,7 +67,7 @@ namespace AssetTracking.Managers
                 }
 
             }
-            
+
             catch (Exception ex)
             {
                 responseDic.Add(LinkDeviceResponse.NetworkException, responseString);
@@ -79,7 +78,7 @@ namespace AssetTracking.Managers
 
         public async Task<string> AuthenticateToken(string accessCode)
         {
-            string requestUri = string.Format(Constants.B2C_AUTH_TOKEN_URL, accessCode);
+            string requestUri = B2CConfigManager.GetInstance().GetB2CTokenUrl(accessCode);
             string strResponse = string.Empty;
             try
             {
@@ -102,7 +101,7 @@ namespace AssetTracking.Managers
             return strResponse;
         }
 
-        public async Task<Dictionary<LinkDeviceResponse,string>> GetSensorTypeFromID(string ID)
+        public async Task<Dictionary<LinkDeviceResponse, string>> GetSensorTypeFromID(string ID)
         {
             string responseString = null;
             Dictionary<LinkDeviceResponse, string> responseDic = new Dictionary<LinkDeviceResponse, string>();
@@ -111,7 +110,7 @@ namespace AssetTracking.Managers
                 using (var client = new HttpClient())
                 {
 
-                    client.BaseAddress = new Uri(Base_Address);
+                    client.BaseAddress = new Uri(Application.Current.Properties[Constants.APP_DOMAIN_URL_KEY].ToString());
                     var content = new StringContent(ID, Encoding.UTF8, "application/json");
                     client.DefaultRequestHeaders.Add("Authorization", "Bearer " + Application.Current.Properties[Constants.APP_SETTINGS_ACCESS_TOKEN_KEY].ToString());
                     HttpResponseMessage response = await client.PostAsync("/api/GetSensorType", content);
@@ -153,7 +152,7 @@ namespace AssetTracking.Managers
                 using (var client = new HttpClient())
                 {
 
-                    client.BaseAddress = new Uri(Base_Address);
+                    client.BaseAddress = new Uri(Application.Current.Properties[Constants.APP_DOMAIN_URL_KEY].ToString());
                     var content = new StringContent(assetId, Encoding.UTF8, "application/json");
                     client.DefaultRequestHeaders.Add("Authorization", "Bearer " + Application.Current.Properties[Constants.APP_SETTINGS_ACCESS_TOKEN_KEY].ToString());
                     HttpResponseMessage response = await client.PostAsync("/api/AssetStatus", content);
@@ -185,6 +184,30 @@ namespace AssetTracking.Managers
                 responseDic.Add(LinkDeviceResponse.NetworkException, responseString);
                 return responseDic;
             }
+        }
+
+        public async Task<string> GetB2CConfiguration(string baseAddress)
+        {
+            string responseStr = null; 
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri(baseAddress);
+                    HttpResponseMessage response = await client.GetAsync("/api/GetMobileConfiguration");
+                    if (response.IsSuccessStatusCode)
+                    {
+                        responseStr = await response.Content.ReadAsStringAsync();
+                    }
+                }
+            }
+            catch(Exception e)
+            {
+                
+            }
+            return responseStr;
+
+            
         }
 
     }

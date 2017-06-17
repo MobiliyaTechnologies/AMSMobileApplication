@@ -55,10 +55,15 @@
     <Compile Include="AssetTrackingPage.xaml.cs">
       <DependentUpon>AssetTrackingPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Managers\B2CConfigManager.cs" />
     <Compile Include="Managers\HttpManager.cs" />
     <Compile Include="Models\AccessToken.cs" />
+    <Compile Include="Models\B2CConfiguration.cs" />
     <Compile Include="Models\LinkInfoModel.cs" />
     <Compile Include="Models\ResponseMessageModel.cs" />
+    <Compile Include="pages\DomainConfigPage.xaml.cs">
+      <DependentUpon>DomainConfigPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="pages\LoginPage.xaml.cs">
       <DependentUpon>LoginPage.xaml</DependentUpon>
     </Compile>
@@ -133,6 +138,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="pages\LoginPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="pages\DomainConfigPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

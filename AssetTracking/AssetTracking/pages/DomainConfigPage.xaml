@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AssetTracking.pages.DomainConfigPage">
+    <ContentPage.Content>        
+        <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="FillAndExpand">
+            <Entry x:Name="txtDomain"   Placeholder="Domain Name" Margin="10,0,10,0"  FontSize="12" HorizontalOptions="FillAndExpand"  />
+            <Button x:Name="btnSubmit" Text="Submit" WidthRequest="100" HorizontalOptions="Center"/>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
