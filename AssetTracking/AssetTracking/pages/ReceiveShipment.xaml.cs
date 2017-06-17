@@ -82,6 +82,10 @@ namespace AssetTracking.pages
                     ShipmentId.Text = text;
                     ScanningContainer.IsVisible = false;
                     ScannedContainer.IsVisible = true;
+                }
+                else if(status == null)
+                {
+                    App.Current.MainPage = new AssetTrackingPage();
                 }               
 
             });

@@ -1,4 +1,5 @@
-﻿using AssetTracking.Utilities;
+﻿using AssetTracking.Models;
+using AssetTracking.Utilities;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -32,8 +33,10 @@ namespace AssetTracking.Managers
 
         public enum LinkDeviceResponse { IdFailure, Success, UnAuthorize, NetworkException,ProcessError };
 
-        public async Task<LinkDeviceResponse> LinkDevice(string jsonData)
+        public async Task<Dictionary<LinkDeviceResponse, string>> LinkDevice(string jsonData)
         {
+            string responseString = null;
+            Dictionary<LinkDeviceResponse, string> responseDic = new Dictionary<LinkDeviceResponse, string>();
             try
             {
 
@@ -46,27 +49,30 @@ namespace AssetTracking.Managers
                     HttpResponseMessage response = await client.PostAsync("/api/Asset", content);
                     if (response.StatusCode == HttpStatusCode.BadRequest)
                     {
-                        return LinkDeviceResponse.ProcessError;
+                        responseString = JsonConvert.DeserializeObject<ResponseMessageModel>(await response.Content.ReadAsStringAsync()).Message;
+                        responseDic.Add(LinkDeviceResponse.ProcessError, responseString);
                     }
                     else if (response.StatusCode == HttpStatusCode.NotFound)
                     {
-                        return LinkDeviceResponse.IdFailure;
+                        responseDic.Add(LinkDeviceResponse.IdFailure, responseString);
                     }
                     else if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
-                        return LinkDeviceResponse.UnAuthorize;
+                        responseDic.Add(LinkDeviceResponse.UnAuthorize, responseString);
                     }
                     else //if(response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.Accepted)
                     {
-                        return LinkDeviceResponse.Success;
+                        responseDic.Add(LinkDeviceResponse.UnAuthorize, responseString);
                     }
+                    return responseDic;
                 }
 
             }
             
             catch (Exception ex)
             {
-                return LinkDeviceResponse.NetworkException;
+                responseDic.Add(LinkDeviceResponse.NetworkException, responseString);
+                return responseDic;
             }
 
         }
