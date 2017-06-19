@@ -2,24 +2,24 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="AssetTracking.pages.ReceiveShipment">
+    <Grid>
+        <Grid RowSpacing="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-    <Grid RowSpacing="0">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-
-        <Grid Grid.Row="0" Padding="0" Margin="0" BackgroundColor="#505050" >
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <Image Source="back.png" Grid.Column="0" Margin="20, 20, 20, 20">
-                <Grid.GestureRecognizers>
-                    <TapGestureRecognizer Tapped="Back"/>
-                </Grid.GestureRecognizers>
-            </Image>
-            <Label x:Name="DispatchTitle"
+            <Grid Grid.Row="0" Padding="0" Margin="0" BackgroundColor="#505050" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Image Source="back.png" Grid.Column="0" Margin="20, 20, 20, 20">
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="Back"/>
+                    </Grid.GestureRecognizers>
+                </Image>
+                <Label x:Name="DispatchTitle"
 						FontSize="24" 
 						Text="Scan Barcode" 
 						TextColor="White"
@@ -27,77 +27,77 @@
 	          			HorizontalOptions="Start" 
 						VerticalOptions="Center"/>
 
-        </Grid>
-        <Grid Grid.Row="1" x:Name="ScanningContainer" RowSpacing="0">
-            <StackLayout x:Name="ContainerLayoutScanner" 
+            </Grid>
+            <Grid Grid.Row="1" x:Name="ScanningContainer" RowSpacing="0">
+                <StackLayout x:Name="ContainerLayoutScanner" 
 						IsVisible="true"
 						VerticalOptions="FillAndExpand">
-                <StackLayout x:Name="ReceiveLayoutScanner" Orientation="Vertical" VerticalOptions="Center" Padding="20" >
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-                        <Image Source="scan_barcode.png" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" />
-                        <Label Grid.Row="1" x:Name="ContailerLayoutReceiveLabel"
+                    <StackLayout x:Name="ReceiveLayoutScanner" Orientation="Vertical" VerticalOptions="Center" Padding="20" >
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Image Source="scan_barcode.png" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" />
+                            <Label Grid.Row="1" x:Name="ContailerLayoutReceiveLabel"
 						Text="Scan the Barcode on the shipment"
 						VerticalOptions="CenterAndExpand"
 							
 						HorizontalOptions="CenterAndExpand"/>
-                    </Grid>
-                    
-                </StackLayout>
-                <StackLayout 
+                        </Grid>
+
+                    </StackLayout>
+                    <StackLayout 
 						x:Name="ScannerLayout"
 						VerticalOptions="FillAndExpand">
+                    </StackLayout>
                 </StackLayout>
-            </StackLayout>
-        </Grid>
-        <Grid Grid.Row="1" RowSpacing="0" x:Name="ScannedContainer"
+            </Grid>
+            <Grid Grid.Row="1" RowSpacing="0" x:Name="ScannedContainer"
             IsVisible="false" Margin="20" VerticalOptions="FillAndExpand">
-            <StackLayout>
-                <Image x:Name="imgStatus" Source="qr_scanned.png" />
-                <Label x:Name="lblStatus"
+                <StackLayout>
+                    <Image x:Name="imgStatus" Source="qr_scanned.png" />
+                    <Label x:Name="lblStatus"
 						Text="Successfully Scanned!"
 						Margin="20"
 						HorizontalOptions="CenterAndExpand"/>
-                <StackLayout x:Name="ShipmentDetails" >
-                    <BoxView HeightRequest="1"
+                    <StackLayout x:Name="ShipmentDetails" >
+                        <BoxView HeightRequest="1"
 							HorizontalOptions="FillAndExpand"
 							BackgroundColor="Gray"/>
-                    <StackLayout Orientation="Horizontal" 
+                        <StackLayout Orientation="Horizontal" 
 								Margin="0,5,0,5">
-                        <Label Text="ID" />
-                        <Label x:Name="ShipmentId" Text="some_id"
+                            <Label Text="ID" />
+                            <Label x:Name="ShipmentId" Text="some_id"
 								HorizontalOptions="EndAndExpand"/>
-                    </StackLayout>
+                        </StackLayout>
 
-                    <BoxView HeightRequest="1"
+                        <BoxView HeightRequest="1"
 								HorizontalOptions="FillAndExpand"
 								BackgroundColor="Gray"/>
 
-                    <StackLayout Orientation="Horizontal"
+                        <StackLayout Orientation="Horizontal"
 								Margin="0,5,0,5">
-                        <Label Text="Date" />
-                        <Label x:Name="lblDate" Text=""
+                            <Label Text="Date" />
+                            <Label x:Name="lblDate" Text=""
 								HorizontalOptions="EndAndExpand"/>
-                    </StackLayout>
+                        </StackLayout>
 
-                    <BoxView HeightRequest="1"
+                        <BoxView HeightRequest="1"
 								HorizontalOptions="FillAndExpand"
 								BackgroundColor="Gray"/>
-                    <StackLayout Orientation="Horizontal"
+                        <StackLayout Orientation="Horizontal"
 								Margin="0,5,0,5">
-                        <Label Text="Time" />
-                        <Label x:Name="lblTime" Text=""
+                            <Label Text="Time" />
+                            <Label x:Name="lblTime" Text=""
 								HorizontalOptions="EndAndExpand"/>
-                    </StackLayout>
-                    
-                    <BoxView HeightRequest="1"
+                        </StackLayout>
+
+                        <BoxView HeightRequest="1"
 								HorizontalOptions="FillAndExpand"
 								BackgroundColor="Gray">
-                    </BoxView>
-                    <!-- <StackLayout Orientation="Horizontal"
+                        </BoxView>
+                        <!-- <StackLayout Orientation="Horizontal"
 								Margin="0,5,0,5">
                         <Label Text="Content" />
                         <Label x:Name="Content" Text="Documents"
@@ -108,8 +108,13 @@
 								HorizontalOptions="FillAndExpand"
 								BackgroundColor="Gray">
                     </BoxView>-->
+                    </StackLayout>
                 </StackLayout>
-            </StackLayout>
+            </Grid>
         </Grid>
+        
+            <ActivityIndicator x:Name="Loader" IsVisible="False" IsRunning="True" IsEnabled="True" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"                           
+                           Color="Black" />
+       
     </Grid>
 </ContentPage>

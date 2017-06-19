@@ -2,10 +2,17 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="AssetTracking.pages.DomainConfigPage">
-    <ContentPage.Content>        
-        <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="FillAndExpand">
-            <Entry x:Name="txtDomain"   Placeholder="Domain Name" Margin="10,0,10,0"  FontSize="12" HorizontalOptions="FillAndExpand"  />
-            <Button x:Name="btnSubmit" Text="Submit" WidthRequest="100" HorizontalOptions="Center"/>
-        </StackLayout>
+    <ContentPage.Content>
+        <Grid>
+            <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="FillAndExpand">
+                <Entry x:Name="txtDomain"   Placeholder="Domain Name" Margin="10,0,10,0"  FontSize="12" HorizontalOptions="FillAndExpand"  />
+                <Button x:Name="btnSubmit" Text="Submit" WidthRequest="100" HorizontalOptions="Center"/>
+            </StackLayout>
+            <Grid x:Name="Loader" IsVisible="False"  HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                <ActivityIndicator  IsRunning="True" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"                           
+                           Color="Black" />
+            </Grid>
+        </Grid>
+        
     </ContentPage.Content>
 </ContentPage>

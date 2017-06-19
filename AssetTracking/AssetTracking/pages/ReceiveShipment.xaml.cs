@@ -45,9 +45,13 @@ namespace AssetTracking.pages
                 //To Do
                 //Code to call api and give proper response
                 zxingView.IsEnabled = false;
-
+                ScanningContainer.IsVisible = false;
+                Loader.IsVisible = true;
+                Loader.IsRunning = true;
                 showScannedData(result.Text);
             });
+           
+            
             zxingView.OnScanResult -= ZxingView_OnScanResult;
         }
 
@@ -55,40 +59,44 @@ namespace AssetTracking.pages
         {
             string status = null;
             Dictionary<HttpManager.LinkDeviceResponse, string> statusDetails = null;
-            Task.Run(async () => {
-                statusDetails = await GetAssetStatusFromServer(text);
-            }).Wait();
-
-            status = GetAssetStatus(statusDetails);
-
-            Device.BeginInvokeOnMainThread(() =>
+            Task.Run(async () =>
             {
-                if(!string.IsNullOrEmpty(status))
-                {
-                    string shipmentStatus = "Shipment Status : ";
-                    DateTime shipmentDate = DateTime.Now;
-                    if (Convert.ToBoolean(status))
-                    {
-                        lblStatus.Text = shipmentStatus + "Good";
-                        imgStatus.Source = "thumbsup";                        
-                    }
-                    else
-                    {
-                        lblStatus.Text = shipmentStatus + "Bad";
-                        imgStatus.Source = "thumbsdown";
-                    }
-                    lblDate.Text = shipmentDate.ToString("dd/MM/yy");
-                    lblTime.Text = shipmentDate.ToString("h:mm tt");
-                    ShipmentId.Text = text;
-                    ScanningContainer.IsVisible = false;
-                    ScannedContainer.IsVisible = true;
-                }
-                else if(status == null)
-                {
-                    App.Current.MainPage = new AssetTrackingPage();
-                }               
+                statusDetails = await GetAssetStatusFromServer(text);
+                status = GetAssetStatus(statusDetails);
 
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    Loader.IsVisible = false;
+
+                    if (!string.IsNullOrEmpty(status))
+                    {
+                        string shipmentStatus = "Shipment Status : ";
+                        DateTime shipmentDate = DateTime.Now;
+                        if (Convert.ToBoolean(status))
+                        {
+                            lblStatus.Text = shipmentStatus + "Good";
+                            imgStatus.Source = "thumbsup";
+                        }
+                        else
+                        {
+                            lblStatus.Text = shipmentStatus + "Bad";
+                            imgStatus.Source = "thumbsdown";
+                        }
+                        lblDate.Text = shipmentDate.ToString("dd/MM/yy");
+                        lblTime.Text = shipmentDate.ToString("h:mm tt");
+                        ShipmentId.Text = text;
+                        ScanningContainer.IsVisible = false;
+                        ScannedContainer.IsVisible = true;
+                    }
+                    else if (status == null)
+                    {
+                        App.Current.MainPage = new AssetTrackingPage();
+                    }
+
+                });
             });
+
+            
         }
 
         string GetAssetStatus(Dictionary<HttpManager.LinkDeviceResponse, string> typeResponse)
@@ -97,35 +105,28 @@ namespace AssetTracking.pages
 
             if (typeResponse.ContainsKey(HttpManager.LinkDeviceResponse.Success))
             {
-
-                typeResponse.TryGetValue(HttpManager.LinkDeviceResponse.Success, out status);
-                Device.BeginInvokeOnMainThread(() =>
-                {
-                //    Loader.IsVisible = false;
-
-                });
+                typeResponse.TryGetValue(HttpManager.LinkDeviceResponse.Success, out status);                
             }
             else if (typeResponse.ContainsKey(HttpManager.LinkDeviceResponse.IdFailure))
             {
                 Device.BeginInvokeOnMainThread(() =>
                 {
-                   // Loader.IsVisible = false;
                     DisplayAlert("Error Occured !!", "This asset is not registered with us.", "OK");
+                    App.Current.MainPage = new AssetTrackingPage();
                 });
             }
             else if (typeResponse.ContainsKey(HttpManager.LinkDeviceResponse.ProcessError))
             {
                 Device.BeginInvokeOnMainThread(() =>
                 {
-                  //  Loader.IsVisible = false;
                     DisplayAlert("Error Occured !!", "Error while processing your request.", "OK");
+                    App.Current.MainPage = new AssetTrackingPage();
                 });
             }
             else if (typeResponse.ContainsKey(HttpManager.LinkDeviceResponse.UnAuthorize))
             {
                 Device.BeginInvokeOnMainThread(async () =>
                 {
-                 //   Loader.IsVisible = false;
                     bool action = await DisplayAlert("Un-Authorized !!", "Would you like to Sign-in again ?", "OK", "Cancel");
                     if (action)
                     {
@@ -144,8 +145,8 @@ namespace AssetTracking.pages
             {
                 Device.BeginInvokeOnMainThread(() =>
                 {
-                 //   Loader.IsVisible = false;
                     DisplayAlert("Network Error !!", "Check your connection and Try Again.", "OK");
+                    App.Current.MainPage = new AssetTrackingPage();
                 });
             }
             return status;

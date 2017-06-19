@@ -9,6 +9,7 @@
                 iOS="0, 20, 0, 0" />
   		</ContentPage.Padding>
 		-->
+        <Grid>
         <Grid RowSpacing="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -317,10 +318,10 @@
                 </StackLayout>
 
             </Grid>
-            <Grid x:Name="Loader" IsVisible="False" Grid.Row="1" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
-                <ActivityIndicator  IsRunning="True" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"                           
-                           Color="Black" />
             </Grid>
+            <ActivityIndicator x:Name="Loader" IsVisible="False" IsRunning="True" IsEnabled="True" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"                           
+                           Color="Black" />
+           
         </Grid>
     </ContentPage.Content>
 </ContentPage>
