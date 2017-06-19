@@ -47,7 +47,7 @@ namespace AssetTracking
         void ScanCode()
         {
             ContainerScanningSteps.IsVisible = true;
-
+            ContainerLayoutScanner.IsVisible = true;
             if (stepScanSensor || zxingView == null)
             {
 
@@ -103,6 +103,9 @@ namespace AssetTracking
                 //DisplayAlert("Scanned Barcode", result.Text, "OK");
 
                 zxingView.IsEnabled = false;
+                ContainerLayoutScanner.IsVisible = false;
+                Loader.IsVisible = true;
+                Loader.IsRunning = true;
                 showScannedData(result.Text);
             });
             zxingView.OnScanResult -= ZxingView_OnScanResult;
@@ -113,45 +116,41 @@ namespace AssetTracking
         {
             if (stepScanSensor)
             {
-                Device.BeginInvokeOnMainThread(() =>
-                {
-                    Loader.IsVisible = true;
-                });
+               
                 string sensorType = null;
                 Dictionary<HttpManager.LinkDeviceResponse, string> sensorDetails = null;
                 Task.Run(async() => {
                      sensorDetails = await GetSensorDetailsFromServer(data);
-                }).Wait();
-
-                sensorType = GetSensorType(sensorDetails);
-
-               
-
-                if (sensorType == null)
-                {
-                    App.Current.MainPage = new AssetTrackingPage();
-                    return;
-                }
-                else if (sensorType == "")
-                {
-                    return;
-                }
-
-                ContainerScanningSteps.IsVisible = false;
-                sensorId = data;
-                SensorID.Text = data;
-                SensorType.Text = sensorType;
-                detailImage.Source = "qr_scanned.png";
-                SensorDetails.IsVisible = true;
-                ShipmentDetails.IsVisible = false;
-                ContainerLayoutScanner.IsVisible = false;
-                ContainerLayoutDetails.IsVisible = true;
-                ContainerLayoutLink.IsVisible = false;
-                DispatchTitle.Text = "Sensor Details";
-
+                    sensorType = GetSensorType(sensorDetails);
+                    if (sensorType == null)
+                    {
+                        App.Current.MainPage = new AssetTrackingPage();
+                        return;
+                    }
+                    else if (sensorType == "")
+                    {
+                        return;
+                    }
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        Loader.IsVisible = false;
+                        ContainerScanningSteps.IsVisible = false;
+                        sensorId = data;
+                        SensorID.Text = data;
+                        SensorType.Text = sensorType;
+                        detailImage.Source = "qr_scanned.png";
+                        SensorDetails.IsVisible = true;
+                        ShipmentDetails.IsVisible = false;
+                        ContainerLayoutScanner.IsVisible = false;
+                        ContainerLayoutDetails.IsVisible = true;
+                        ContainerLayoutLink.IsVisible = false;
+                        DispatchTitle.Text = "Sensor Details";
+                    });
+                });   
             }
             else if (stepScanShipment)
             {
+                Loader.IsVisible = false;
                 ContainerScanningSteps.IsVisible = false;
                 shipmentId = data;
                 ShipmentId.Text = data;

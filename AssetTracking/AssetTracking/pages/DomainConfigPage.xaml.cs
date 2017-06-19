@@ -32,7 +32,11 @@ namespace AssetTracking.pages
             }
            else
             {
-               
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    Loader.IsVisible = true;
+                });
+
                 Application.Current.Properties[Constants.APP_DOMAIN_URL_KEY] = domainName;
                 string jsonResp = await HttpManager.GetInstance().GetB2CConfiguration(Application.Current.Properties[Constants.APP_DOMAIN_URL_KEY].ToString());
                 if(jsonResp!=null)
@@ -46,12 +50,20 @@ namespace AssetTracking.pages
                     }
                     else
                     {
-                        DisplayAlert("Error!", "Fetched data has some null values for B2C login", "OK");
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            Loader.IsVisible = false;
+                            DisplayAlert("Error!", "Fetched data has some null values for B2C login", "OK");
+                        });
                     }
                 }
                 else
                 {
-                    DisplayAlert("Error!", "Problem in fetching proper data from server", "OK");
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        Loader.IsVisible = false;
+                        DisplayAlert("Error!", "Problem in fetching proper data from server", "OK");
+                    });
                 }
                 
                

@@ -73,19 +73,6 @@ namespace AssetTracking.pages
                         App.Current.MainPage = new AssetTrackingPage();
                     }
                 }
-                //string code = Common.FunGetValuefromQueryString(url, "code");
-                //var preferenceHandler = new PreferenceHandler();
-                //preferenceHandler.SetAccessCode(code);
-
-                //string tokenURL = string.Format(B2CConfig.TokenURL, B2CConfig.Tenant, B2CPolicy.SignInPolicyId, B2CConfig.Grant_type, B2CConfig.ClientSecret, B2CConfig.ClientId, code);
-                //var response = await InvokeApi.Authenticate(tokenURL, string.Empty, HttpMethod.Post);
-                //if (response.StatusCode == System.Net.HttpStatusCode.OK)
-                //{
-                //    string strContent = await response.Content.ReadAsStringAsync();
-                //    var token = JsonConvert.DeserializeObject<AccessToken>(strContent);
-                //    preferenceHandler.SetToken(token.id_token);
-
-                //}
 
             }
             Device.BeginInvokeOnMainThread(() =>
