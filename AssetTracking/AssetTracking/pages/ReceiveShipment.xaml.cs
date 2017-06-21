@@ -119,7 +119,9 @@ namespace AssetTracking.pages
             {
                 Device.BeginInvokeOnMainThread(() =>
                 {
-                    DisplayAlert("Error Occured !!", "Error while processing your request.", "OK");
+                    string statusMsg;
+                    typeResponse.TryGetValue(HttpManager.LinkDeviceResponse.ProcessError, out statusMsg);
+                    DisplayAlert("Error Occured !!", statusMsg, "OK");
                     App.Current.MainPage = new AssetTrackingPage();
                 });
             }

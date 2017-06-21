@@ -124,7 +124,10 @@ namespace AssetTracking
                     sensorType = GetSensorType(sensorDetails);
                     if (sensorType == null)
                     {
-                        App.Current.MainPage = new AssetTrackingPage();
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            App.Current.MainPage = new AssetTrackingPage();
+                        });
                         return;
                     }
                     else if (sensorType == "")
@@ -338,7 +341,8 @@ namespace AssetTracking
 
         async Task<Dictionary<HttpManager.LinkDeviceResponse, string>> GetSensorDetailsFromServer(string sensorId)
         {
-            Dictionary<HttpManager.LinkDeviceResponse, string> typeResponse = await HttpManager.GetInstance().GetSensorTypeFromID(sensorId);
+            string requestId = JsonConvert.SerializeObject(sensorId);
+            Dictionary<HttpManager.LinkDeviceResponse, string> typeResponse = await HttpManager.GetInstance().GetSensorTypeFromID(requestId);
             return typeResponse;
         }
 
