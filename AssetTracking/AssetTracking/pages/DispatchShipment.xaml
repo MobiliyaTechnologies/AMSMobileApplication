@@ -71,7 +71,7 @@
                         <Image Source="step_grey.png" Aspect="Fill" Margin="0,0,-10,0" />
                         <StackLayout VerticalOptions="Center">
                             <Image x:Name="ImageScanShipment" Source = "scan_barcode.png"/>
-                            <Label x:Name="textScanShipment" Text="Scan Shipment" HorizontalOptions="Center" FontSize="15"/>
+                            <Label x:Name="textScanShipment" Margin="7,0,0,0" Text="Scan Shipment" HorizontalOptions="Center" FontSize="14"/>
                         </StackLayout>
                     </Grid>
                     <Grid Grid.Column="0" VerticalOptions="Start" HorizontalOptions="FillAndExpand" 
@@ -101,7 +101,7 @@
                     </StackLayout>
                     
                     <StackLayout 
-						x:Name="ScannerLayout"
+						x:Name="ScannerLayout" Padding="0" Margin="0"
 						VerticalOptions="FillAndExpand">
                     </StackLayout>
                 </StackLayout>
@@ -222,7 +222,7 @@
 						VerticalOptions="FillAndExpand">
 
                     <Label Text="Sensor"
-						Margin="0,0,0,15"
+						Margin="0,0,0,5"
 						HorizontalOptions="StartAndExpand"/>
 
                     <StackLayout Orientation="Horizontal" 
@@ -253,7 +253,7 @@
                     </BoxView>
 
                     <Label Text="Package"
-						Margin="0,20,0,15"
+						Margin="0,5,0,5"
 						HorizontalOptions="StartAndExpand"/>
 
                     <StackLayout Orientation="Horizontal" 
@@ -262,7 +262,6 @@
                         <Label x:Name="ShipmentIdLink" BindingContext="{x:Reference Name=ShipmentId}" Text="{Binding Path=Text}"
 								HorizontalOptions="EndAndExpand"/>
                     </StackLayout>
-
                     <!--<StackLayout Orientation="Horizontal"
 								Margin="0,5,0,5">
                         <Label Text="Source" />

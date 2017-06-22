@@ -133,6 +133,14 @@
     <ImageAsset Include="Assets.xcassets\LaunchImage.launchimage\Contents.json">
       <InProject>false</InProject>
     </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon-App-29x29%401x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon-App-29x29%402x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon-App-29x29%403x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon-App-40x40%402x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon-App-60x60%402x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon-App-57x57%401x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon-App-57x57%402x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon-App-60x60%403x.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AssetTracking\AssetTracking.csproj">
@@ -154,9 +162,6 @@
     <Compile Include="AppDelegate.cs" />
   </ItemGroup>
   <ItemGroup>
-    <BundleResource Include="splash_screen.png">
-      <Link>Resources\splash_screen.png</Link>
-    </BundleResource>
     <BundleResource Include="Resources\bg.png" />
     <BundleResource Include="Resources\dispatch.png" />
     <BundleResource Include="Resources\receive.png" />
@@ -207,6 +212,9 @@
     <BundleResource Include="Resources\bg%403x.png" />
     <BundleResource Include="Resources\linked%402x.png" />
     <BundleResource Include="Resources\linked%403x.png" />
+    <BundleResource Include="Resources\splash_screen.jpg" />
+    <BundleResource Include="Resources\splash_screen%402x.jpg" />
+    <BundleResource Include="Resources\splash_screen%403x.jpg" />
   </ItemGroup>
   <ItemGroup>
     <XamarinComponentReference Include="zxing.net.mobile.forms">

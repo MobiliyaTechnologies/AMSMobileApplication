@@ -61,7 +61,7 @@ namespace AssetTracking.Managers
                     }
                     else //if(response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.Accepted)
                     {
-                        responseDic.Add(LinkDeviceResponse.Success, responseString);
+						responseDic.Add(LinkDeviceResponse.Success, responseString);
                     }
                     return responseDic;
                 }
@@ -158,7 +158,7 @@ namespace AssetTracking.Managers
                     HttpResponseMessage response = await client.PostAsync("/api/AssetStatus", content);
                     if (response.StatusCode == HttpStatusCode.BadRequest)
                     {
-                        responseString = JsonConvert.DeserializeObject<ResponseMessageModel>(await response.Content.ReadAsStringAsync()).Message;
+						responseString = JsonConvert.DeserializeObject<ResponseMessageModel>(await response.Content.ReadAsStringAsync()).Message;
                         responseDic.Add(LinkDeviceResponse.ProcessError, responseString);
                     }
                     else if (response.StatusCode == HttpStatusCode.NotFound)

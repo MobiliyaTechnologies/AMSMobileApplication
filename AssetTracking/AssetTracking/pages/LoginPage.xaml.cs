@@ -36,49 +36,52 @@ namespace AssetTracking.pages
             //App.Current.MainPage = new AssetTrackingPage();
         }
 
-        private void Browser_Navigating(object sender, WebNavigatingEventArgs e)
+        private  void Browser_Navigating(object sender, WebNavigatingEventArgs e)
         {
-            Device.BeginInvokeOnMainThread(() =>
+            Device.BeginInvokeOnMainThread(async() =>
             {
                 Loader.IsVisible = true;
+				if (e.Url.Contains("&code="))
+				{
+					string accessCode = Utility.GetAccessTokenfromQueryString(e.Url, "code");
+
+
+					string responseData = await HttpManager.GetInstance().AuthenticateToken(accessCode);
+					if (!string.IsNullOrEmpty(responseData))
+					{
+						Application.Current.Properties[Constants.APP_SETTINGS_ACCESS_TOKEN_KEY] = JsonConvert.DeserializeObject<AccessToken>(responseData).id_token;
+						if (string.IsNullOrEmpty(Application.Current.Properties[Constants.APP_SETTINGS_ACCESS_TOKEN_KEY].ToString()))
+						{
+							Device.BeginInvokeOnMainThread(() =>
+							{
+								Loader.IsVisible = false;
+							});
+							App.Current.MainPage = new LoginPage();
+						}
+						else
+						{
+							Device.BeginInvokeOnMainThread(() =>
+							{
+								Loader.IsVisible = false;
+							});
+							App.Current.MainPage = new AssetTrackingPage();
+						}
+					}
+				
+					Loader.IsVisible = false;
+
+				}
+
             });
         }
 
         private async void Browser_Navigated(object sender, WebNavigatedEventArgs e)
         {           
 
-            if (e.Url.Contains("&code="))
-            {
-                string accessCode = Utility.GetAccessTokenfromQueryString(e.Url, "code");
-
-
-                string responseData = await HttpManager.GetInstance().AuthenticateToken(accessCode);
-                if (!string.IsNullOrEmpty(responseData))
-                {
-                    Application.Current.Properties[Constants.APP_SETTINGS_ACCESS_TOKEN_KEY] = JsonConvert.DeserializeObject<AccessToken>(responseData).id_token;
-                    if (string.IsNullOrEmpty(Application.Current.Properties[Constants.APP_SETTINGS_ACCESS_TOKEN_KEY].ToString()))
-                    {
-                        Device.BeginInvokeOnMainThread(() =>
-                        {
-                            Loader.IsVisible = false;
-                        });
-                        App.Current.MainPage = new LoginPage();
-                    }
-                    else
-                    {
-                        Device.BeginInvokeOnMainThread(() =>
-                        {
-                            Loader.IsVisible = false;
-                        });
-                        App.Current.MainPage = new AssetTrackingPage();
-                    }
-                }
-
-            }
             Device.BeginInvokeOnMainThread(() =>
-            {
-                Loader.IsVisible = false;
-            });
+							{
+								Loader.IsVisible = false;
+							});
         }
     }
 }
