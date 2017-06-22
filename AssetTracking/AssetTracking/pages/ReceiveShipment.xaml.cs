@@ -119,9 +119,9 @@ namespace AssetTracking.pages
             {
                 Device.BeginInvokeOnMainThread(() =>
                 {
-                    string statusMsg;
-                    typeResponse.TryGetValue(HttpManager.LinkDeviceResponse.ProcessError, out statusMsg);
-                    DisplayAlert("Error Occured !!", statusMsg, "OK");
+					string statusMsg;
+					typeResponse.TryGetValue(HttpManager.LinkDeviceResponse.ProcessError, out statusMsg);
+					DisplayAlert("Error Occured !!", statusMsg, "OK");
                     App.Current.MainPage = new AssetTrackingPage();
                 });
             }

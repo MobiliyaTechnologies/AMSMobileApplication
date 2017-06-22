@@ -29,26 +29,63 @@ namespace AssetTracking
             ScanCode();
         }
 
-        async void OnTappedLink(object sender, EventArgs args)
-        {
-            await DisplayAlert("Clicked!", "Do you want to link?", "OK");
-        }
+		async void OnTappedScanSensor(object sender, EventArgs args)
+		{
+			if (!stepScanSensor)
+			{
+				var answer = await DisplayAlert("Scan Sensor!", "Do you want to scan sensor?", "Yes", "No");
+				if (answer)
+				{
+					stepScanSensor = true;
+					stepScanShipment = false;
+					stepLink = false;
+					sensorId = null;
+					shipmentId = null;
+					ScanCode();
+				}
+			}
+		}
 
-        async void OnTappedScanShipment(object sender, EventArgs args)
-        {
-            await DisplayAlert("Clicked!", "Do you want to scan shipment?", "OK");
-        }
+		async void OnTappedScanShipment(object sender, EventArgs args)
+		{
+			if (!stepScanShipment)
+			{
+				if (sensorId == null)
+				{
+					await DisplayAlert("Scan Shipment!", "Please scan sensor first.", "Ok");
+					return;
+				}
 
-        async void OnTappedScanSensor(object sender, EventArgs args)
-        {
-            await DisplayAlert("Clicked!", "Do you want to Scan Sensor?", "OK");
-        }
+				var answer = await DisplayAlert("Scan Shipment!", "Do you want to scan shipment?", "Yes", "No");
+				if (answer)
+				{
+					stepScanSensor = false;
+					stepScanShipment = true;
+					stepLink = false;
+					shipmentId = null;
+					ScanCode();
+				}
+			}
+		}
+
+		async void OnTappedLink(object sender, EventArgs args)
+		{
+			if (!stepLink)
+			{
+				if (sensorId == null || shipmentId == null)
+				{
+					await DisplayAlert("Link", "Please scan sensor and shipment first.", "Ok");
+					return;
+				}
+
+			}
+		}
 
         void ScanCode()
         {
             ContainerScanningSteps.IsVisible = true;
             ContainerLayoutScanner.IsVisible = true;
-            if (stepScanSensor || zxingView == null)
+            if (stepScanSensor)
             {
 
                 ImageScanSensor.Source = "scan_sensor_green.png";
@@ -58,14 +95,17 @@ namespace AssetTracking
                 textScanShipment.TextColor = Color.FromHex("2a3129");
                 textLink.TextColor = Color.FromHex("2a3129");
                 ContailerLayoutLabel.Text = "Scan Sensor's QR Code";
-                zxingView = new ZXingScannerView
-                {
-                    HorizontalOptions = LayoutOptions.FillAndExpand,
-                    VerticalOptions = LayoutOptions.FillAndExpand,
-                    AutomationId = "zxingScannerView",
-                };
-                zxingView.AutoFocus();
-                zxingView.BackgroundColor = Color.White;
+				if (zxingView == null)
+				{
+					zxingView = new ZXingScannerView
+					{
+						HorizontalOptions = LayoutOptions.FillAndExpand,
+						VerticalOptions = LayoutOptions.FillAndExpand,
+						AutomationId = "zxingScannerView",
+					};
+					zxingView.AutoFocus();
+					zxingView.BackgroundColor = Color.White;
+				}
                 zxingView.OnScanResult += ZxingView_OnScanResult;
 
                 ScannerLayout.Children.Add(zxingView);
@@ -79,6 +119,7 @@ namespace AssetTracking
                 textScanShipment.TextColor = Color.FromHex("229f7c");
                 textLink.TextColor = Color.FromHex("2a3129");
                 ContailerLayoutLabel.Text = "Scan Shipment's Barcode";
+				zxingView.OnScanResult += ZxingView_OnScanResult;
             }
             ContainerLayoutDetails.IsVisible = false;
             ContainerLayoutLink.IsVisible = false;
@@ -124,10 +165,10 @@ namespace AssetTracking
                     sensorType = GetSensorType(sensorDetails);
                     if (sensorType == null)
                     {
-                        Device.BeginInvokeOnMainThread(() =>
-                        {
-                            App.Current.MainPage = new AssetTrackingPage();
-                        });
+						Device.BeginInvokeOnMainThread(() =>
+					{
+						App.Current.MainPage = new AssetTrackingPage();
+					});
                         return;
                     }
                     else if (sensorType == "")
@@ -206,6 +247,7 @@ namespace AssetTracking
             base.OnDisappearing();
         }
 
+		//update start
         void Next(object sender, EventArgs args)
         {
 
@@ -217,7 +259,6 @@ namespace AssetTracking
                 stepScanShipment = true;
                 DispatchTitle.Text = "Scan Shipment";
                 stepLink = false;
-                zxingView.OnScanResult += ZxingView_OnScanResult;
                 ScanCode();
             }
             else if (stepScanShipment)
@@ -226,10 +267,7 @@ namespace AssetTracking
                 stepScanShipment = false;
                 stepLink = true;
                 DispatchTitle.Text = "Link";
-                zxingView.IsEnabled = false;
-                zxingView.IsScanning = false;
-                ScannerLayout.Children.Remove(zxingView);
-                zxingView = null;
+                
 
 
                 showScannedData(null);
@@ -244,6 +282,10 @@ namespace AssetTracking
 
         void Link(object sender, EventArgs args)
         {
+			zxingView.IsEnabled = false;
+			zxingView.IsScanning = false;
+			ScannerLayout.Children.Remove(zxingView);
+			zxingView = null;
             Device.BeginInvokeOnMainThread(() =>
             {
                 Loader.IsVisible = true;
@@ -341,8 +383,8 @@ namespace AssetTracking
 
         async Task<Dictionary<HttpManager.LinkDeviceResponse, string>> GetSensorDetailsFromServer(string sensorId)
         {
-            string requestId = JsonConvert.SerializeObject(sensorId);
-            Dictionary<HttpManager.LinkDeviceResponse, string> typeResponse = await HttpManager.GetInstance().GetSensorTypeFromID(requestId);
+			string requestId = JsonConvert.SerializeObject(sensorId);
+			Dictionary<HttpManager.LinkDeviceResponse, string> typeResponse = await HttpManager.GetInstance().GetSensorTypeFromID(requestId);
             return typeResponse;
         }
 
