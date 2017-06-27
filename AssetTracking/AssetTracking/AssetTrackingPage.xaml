@@ -30,7 +30,7 @@
 				Margin="20, 15, 20, 0">
 			<StackLayout VerticalOptions="Center">
 				<StackLayout.GestureRecognizers>
-			        <TapGestureRecognizer Tapped="OnTappedDispatch"/>
+			        <TapGestureRecognizer x:Name="TapGesture" />
 			    </StackLayout.GestureRecognizers>
                 <Image Source="dispatch.png"/>
                 <Label Text="DISPATCH"
@@ -48,7 +48,7 @@
 				Margin="20, 0, 20, 20">
 			<StackLayout VerticalOptions="Center">
 				<StackLayout.GestureRecognizers>
-			        <TapGestureRecognizer Tapped="OnTappedReceive"/>
+			        <TapGestureRecognizer x:Name="TabReceive"/>
 			    </StackLayout.GestureRecognizers>
                 <Image Source="receive.png"/>
                 <Label Text="RECEIVE"
