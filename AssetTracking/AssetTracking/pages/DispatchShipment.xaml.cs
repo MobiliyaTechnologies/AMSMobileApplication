@@ -277,15 +277,25 @@ namespace AssetTracking
         async void Back(object sender, EventArgs args)
         {
             //await DisplayAlert("Clicked!", "Do you want to go Next?", "OK");
+			if (zxingView != null)
+			{
+				zxingView.IsEnabled = false;
+				zxingView.IsScanning = false;
+				ScannerLayout.Children.Remove(zxingView);
+				zxingView = null;
+			}
             await Navigation.PopModalAsync();
         }
 
         void Link(object sender, EventArgs args)
         {
-			zxingView.IsEnabled = false;
-			zxingView.IsScanning = false;
-			ScannerLayout.Children.Remove(zxingView);
-			zxingView = null;
+			if (zxingView != null)
+			{
+				zxingView.IsEnabled = false;
+				zxingView.IsScanning = false;
+				ScannerLayout.Children.Remove(zxingView);
+				zxingView = null;
+			}
             Device.BeginInvokeOnMainThread(() =>
             {
                 Loader.IsVisible = true;
