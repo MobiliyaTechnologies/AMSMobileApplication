@@ -58,6 +58,7 @@
     <Compile Include="Managers\B2CConfigManager.cs" />
     <Compile Include="Managers\HttpManager.cs" />
     <Compile Include="Models\AccessToken.cs" />
+    <Compile Include="Models\AssetStatusModel.cs" />
     <Compile Include="Models\B2CConfiguration.cs" />
     <Compile Include="Models\LinkInfoModel.cs" />
     <Compile Include="Models\ResponseMessageModel.cs" />

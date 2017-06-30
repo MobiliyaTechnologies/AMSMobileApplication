@@ -15,8 +15,8 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            
-            <Grid Grid.Row="0" Padding="0" Margin="0" BackgroundColor="#505050" >
+
+                <Grid Grid.Row="0" Padding="0" Margin="0" BackgroundColor="#333947" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
@@ -35,12 +35,13 @@
 						VerticalOptions="Center"/>
                 
             </Grid>
-            <Grid x:Name="ContainerLinking" Grid.Row="1" Margin="0" Padding="0" VerticalOptions="FillAndExpand" IsVisible="true">
+                <Grid x:Name="ContainerLinking" Grid.Row="1" Margin="0" Padding="0" VerticalOptions="FillAndExpand" BackgroundColor="#ffffff" IsVisible="true">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <Grid ColumnSpacing="0" x:Name="ContainerScanningSteps"
+                    <StackLayout Spacing="0" Padding="0" Margin="0">
+                <Grid ColumnSpacing="0" x:Name="ContainerScanningSteps" RowSpacing="0"
 						VerticalOptions="Start"  
                       HorizontalOptions="FillAndExpand" Padding="0" Margin="0">
 
@@ -56,7 +57,7 @@
                         <Grid.GestureRecognizers>
                             <TapGestureRecognizer Tapped="OnTappedLink"></TapGestureRecognizer>
                         </Grid.GestureRecognizers>
-                        <Image Source="step_grey.png" Aspect="Fill" Margin="0,0,-10,0" />
+                        <Image x:Name="ImgLinkBg" Aspect="Fill" Margin="0,0,-10,0" />
                         <StackLayout VerticalOptions="Center">
                             <Image x:Name="ImageLink" Source = "link.png"/>
                             <Label x:Name="textLink" Text="Link" HorizontalOptions="Center" FontSize="15"/>
@@ -68,7 +69,7 @@
                         <Grid.GestureRecognizers>
                             <TapGestureRecognizer Tapped="OnTappedScanShipment"></TapGestureRecognizer>
                         </Grid.GestureRecognizers>
-                        <Image Source="step_grey.png" Aspect="Fill" Margin="0,0,-10,0" />
+                            <Image x:Name="ImgShipmentBg"  Aspect="Fill" Margin="0,0,-10,0" />
                         <StackLayout VerticalOptions="Center">
                             <Image x:Name="ImageScanShipment" Source = "scan_barcode.png"/>
                             <Label x:Name="textScanShipment" Margin="7,0,0,0" Text="Scan Shipment" HorizontalOptions="Center" FontSize="14"/>
@@ -79,7 +80,7 @@
                         <Grid.GestureRecognizers>
                             <TapGestureRecognizer Tapped="OnTappedScanSensor"></TapGestureRecognizer>
                         </Grid.GestureRecognizers>
-                        <Image Source="step_grey.png" Aspect="Fill" Margin="0,0,-10,0" />
+                            <Image x:Name="ImgSensorBg"  Aspect="Fill" Margin="0,0,-10,0" />
                         <StackLayout VerticalOptions="Center" >
                             <Image x:Name="ImageScanSensor" Source = "scan_sensor_green.png"/>
                             <Label x:Name="textScanSensor" Text="Scan Sensor" HorizontalOptions="Center" FontSize="15" TextColor="#229f7c"/>
@@ -87,15 +88,20 @@
                     </Grid>
 
                 </Grid>
-               
-                <StackLayout x:Name="ContainerLayoutScanner" 
+                        <BoxView HeightRequest="1" VerticalOptions="Start"
+								HorizontalOptions="FillAndExpand"
+								BackgroundColor="#dddddd"/>
+                    </StackLayout>
+                    <StackLayout x:Name="ContainerLayoutScanner" BackgroundColor="#ffffff"
 						Grid.Row="1"
 						IsVisible="true"
 						VerticalOptions="FillAndExpand">
-                    <StackLayout x:Name="DispatchLayoutScanner">
+                        <StackLayout x:Name="DispatchLayoutScanner" BackgroundColor="#ffffff">
                     <Label x:Name="ContailerLayoutLabel"
-						Text="Scan the Sensor's QR Code"
+						Text="Scan the Sensor's QR Code" 
+                           Font="18"
 						HeightRequest="50"
+                           TextColor="#1d1d1d"
 							Margin="0,25,0,0"
 						HorizontalOptions="CenterAndExpand"/>
                     </StackLayout>
@@ -109,68 +115,69 @@
                 
 
                 <StackLayout x:Name="ContainerLayoutDetails" 
-						Grid.Row="1"
-						IsVisible="false"
-						Margin="20"
+						Grid.Row="1" Spacing="0" Margin="0" Padding="0" BackgroundColor="#ffffff"
+						IsVisible="false"						
 						VerticalOptions="FillAndExpand">
                     <Image x:Name="detailImage" Source="qr_scanned.png" />
                     <Label x:Name="ContailerLayoutLabel2"
 						Text="Successfully Scanned!"
+                           TextColor="#1d1d1d"
 						Margin="20"
+                           Font="18"
 						HorizontalOptions="CenterAndExpand"/>
 
-                    <StackLayout x:Name="SensorDetails" IsVisible="false">
+                        <StackLayout x:Name="SensorDetails" Margin="20" IsVisible="false" BackgroundColor="#ffffff">
                         <BoxView HeightRequest="1"
 							HorizontalOptions="FillAndExpand"
-							BackgroundColor="Gray"/>
+							BackgroundColor="#dddddd"/>
                         <StackLayout Orientation="Horizontal" 
 								Margin="0,5,0,5">
-                            <Label Text="Type" />
-                            <Label x:Name="SensorType" Text="Bosch XDK"
+                                <Label Text="Type" TextColor="#1d1d1d" />
+                                <Label x:Name="SensorType" TextColor="#1d1d1d" Text="Bosch XDK"
 								HorizontalOptions="EndAndExpand"/>
                         </StackLayout>
 
                         <BoxView HeightRequest="1"
 								HorizontalOptions="FillAndExpand"
-								BackgroundColor="Gray"/>
+								BackgroundColor="#dddddd"/>
 
                         <StackLayout Orientation="Horizontal"
 								Margin="0,5,0,5">
-                            <Label Text="Health" />
-                            <Label x:Name="Health" Text="Good"
+                                <Label Text="Health" TextColor="#1d1d1d" />
+                                <Label x:Name="Health" TextColor="#1d1d1d" Text="Good"
 								HorizontalOptions="EndAndExpand"/>
                         </StackLayout>
 
                         <BoxView HeightRequest="1"
 								HorizontalOptions="FillAndExpand"
-								BackgroundColor="Gray"/>
+								BackgroundColor="#dddddd"/>
                         <StackLayout Orientation="Horizontal"
 								Margin="0,5,0,5">
-                            <Label Text="ID" />
-                            <Label x:Name="SensorID" Text="some_id"
+                                <Label Text="ID" TextColor="#1d1d1d" />
+                                <Label x:Name="SensorID" TextColor="#1d1d1d" Text="some_id"
 								HorizontalOptions="EndAndExpand"/>
                         </StackLayout>
 
                         <BoxView HeightRequest="1"
 								HorizontalOptions="FillAndExpand"
-								BackgroundColor="Gray">
+								BackgroundColor="#dddddd">
                         </BoxView>
                     </StackLayout>
 
-                    <StackLayout x:Name="ShipmentDetails" IsVisible="true">
+                        <StackLayout x:Name="ShipmentDetails" Margin="20" IsVisible="true" BackgroundColor="#ffffff">
                         <BoxView HeightRequest="1"
 							HorizontalOptions="FillAndExpand"
-							BackgroundColor="Gray"/>
+							BackgroundColor="#dddddd"/>
                         <StackLayout Orientation="Horizontal" 
 								Margin="0,5,0,5">
-                            <Label Text="ID" />
-                            <Label x:Name="ShipmentId" Text="some_id"
+                                <Label Text="ID" TextColor="#1d1d1d" />
+                                <Label x:Name="ShipmentId" TextColor="#1d1d1d" Text="some_id"
 								HorizontalOptions="EndAndExpand"/>
                         </StackLayout>
 
                         <BoxView HeightRequest="1"
 								HorizontalOptions="FillAndExpand"
-								BackgroundColor="Gray"/>
+								BackgroundColor="#dddddd"/>
 
                         <!--<StackLayout Orientation="Horizontal"
 								Margin="0,5,0,5">
@@ -206,60 +213,59 @@
                         </BoxView>-->
                     </StackLayout>
 
-                    <StackLayout VerticalOptions="EndAndExpand">
-                        <Button x:Name="ButtonNext"
+                    <StackLayout VerticalOptions="EndAndExpand" Margin="0" Padding="0" Spacing="0">
+                            <Button x:Name="ButtonNext" VerticalOptions="EndAndExpand" Margin="0"  BorderRadius="0" BorderWidth="0"
 								Clicked="Next"
 								Text="Next"
 	           					TextColor="White"
 								HorizontalOptions="FillAndExpand"
-								BackgroundColor="#229f7c"/>
-                    </StackLayout>
+								BackgroundColor="#3eb493"/>
+                        </StackLayout>
                 </StackLayout>
-                <StackLayout x:Name="ContainerLayoutLink" 
+                    <StackLayout x:Name="ContainerLayoutLink" BackgroundColor="#ffffff"
 						Grid.Row="1"
 						IsVisible="false"
-						Margin="20"
 						VerticalOptions="FillAndExpand">
 
-                    <Label Text="Sensor"
-						Margin="0,0,0,5"
+                        <Label Text="Sensor" Font="16" FontAttributes="Bold" TextColor="#1d1d1d"
+						Margin="20,20,20,5"
 						HorizontalOptions="StartAndExpand"/>
 
                     <StackLayout Orientation="Horizontal" 
-								Margin="0,5,0,5">
-                        <Label Text="Type" />
-                        <Label x:Name="TypeLink" BindingContext="{x:Reference Name=SensorType}" Text="{Binding Path=Text}"
+								Margin="20,5,20,5">
+                            <Label Text="Type" TextColor="#1d1d1d" />
+                            <Label x:Name="TypeLink" TextColor="#1d1d1d" BindingContext="{x:Reference Name=SensorType}" Text="{Binding Path=Text}"
 								HorizontalOptions="EndAndExpand"/>
                     </StackLayout>
 
                     <StackLayout Orientation="Horizontal"
-								Margin="0,5,0,5">
-                        <Label Text="Health" />
-                        <Label x:Name="HealthLink" Text="Good"
+								Margin="20,5,20,5">
+                            <Label Text="Health" TextColor="#1d1d1d" />
+                            <Label x:Name="HealthLink" TextColor="#1d1d1d" Text="Good"
 								HorizontalOptions="EndAndExpand"/>
                     </StackLayout>
 
                     <StackLayout Orientation="Horizontal"
-								Margin="0,5,0,5">
-                        <Label Text="ID" />
-                        <Label x:Name="SensorIDLink" BindingContext="{x:Reference Name=SensorID}" Text="{Binding Path=Text}"
+								Margin="20,5,20,5">
+                            <Label Text="ID" TextColor="#1d1d1d" />
+                            <Label x:Name="SensorIDLink" TextColor="#1d1d1d" BindingContext="{x:Reference Name=SensorID}" Text="{Binding Path=Text}"
 								HorizontalOptions="EndAndExpand"/>
                     </StackLayout>
 
 
-                    <BoxView HeightRequest="1"
+                        <BoxView HeightRequest="1" Margin="20,0,20,0"
 								HorizontalOptions="FillAndExpand"
-								BackgroundColor="Gray">
+								BackgroundColor="#dddddd">
                     </BoxView>
 
-                    <Label Text="Package"
-						Margin="0,5,0,5"
+                        <Label Text="Package" TextColor="#1d1d1d" Font="16" FontAttributes="Bold"
+						Margin="20,5,20,5"
 						HorizontalOptions="StartAndExpand"/>
 
                     <StackLayout Orientation="Horizontal" 
-								Margin="0,5,0,5">
-                        <Label Text="ID" />
-                        <Label x:Name="ShipmentIdLink" BindingContext="{x:Reference Name=ShipmentId}" Text="{Binding Path=Text}"
+								Margin="20,5,20,5">
+                            <Label Text="ID" TextColor="#1d1d1d" />
+                            <Label x:Name="ShipmentIdLink" TextColor="#1d1d1d" BindingContext="{x:Reference Name=ShipmentId}" Text="{Binding Path=Text}"
 								HorizontalOptions="EndAndExpand"/>
                     </StackLayout>
                     <!--<StackLayout Orientation="Horizontal"
@@ -283,17 +289,17 @@
 								HorizontalOptions="EndAndExpand"/>
                     </StackLayout>-->
 
-                    <StackLayout VerticalOptions="EndAndExpand">
-                        <Button x:Name="ButtonLink"
+                        <StackLayout VerticalOptions="EndAndExpand"  Margin="0" Padding="0" Spacing="0">
+                            <Button x:Name="ButtonLink" VerticalOptions="EndAndExpand" Margin="0"  BorderRadius="0" BorderWidth="0"
 								Clicked="Link"
 								Text="LINK"
 	           					TextColor="White"
 								HorizontalOptions="FillAndExpand"
-								BackgroundColor="#229f7c"/>
+								BackgroundColor="#3eb493"/>
                     </StackLayout>
                 </StackLayout>
             </Grid>
-            <Grid x:Name="ContainerLinked" Grid.Row="1" VerticalOptions="FillAndExpand" IsVisible="false">
+                <Grid x:Name="ContainerLinked" Grid.Row="1" VerticalOptions="FillAndExpand" BackgroundColor="#ffffff" IsVisible="false">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
@@ -304,11 +310,12 @@
                     <Label Text="The sensor and shipment have been successfully linked!" 
 						HorizontalOptions="CenterAndExpand" 
 						HorizontalTextAlignment="Center"
+                           TextColor="#1d1d1d"
 						FontSize="20"/>
                 </StackLayout>
                 <StackLayout VerticalOptions="EndAndExpand"
 						Grid.Row="1">
-                    <Button x:Name="ButtonDone"
+                        <Button x:Name="ButtonDone"  Margin="0"  BorderRadius="0" BorderWidth="0"
 								Clicked="Done"
 								Text="DONE"
 	           					TextColor="White"
@@ -319,7 +326,7 @@
             </Grid>
             </Grid>
             <ActivityIndicator x:Name="Loader" IsVisible="False" IsRunning="True" IsEnabled="True" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"                           
-                           Color="Black" />
+                           Color="#1d1d1d" />
            
         </Grid>
     </ContentPage.Content>

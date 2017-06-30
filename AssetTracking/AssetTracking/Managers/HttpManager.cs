@@ -30,7 +30,7 @@ namespace AssetTracking.Managers
         }
         
 
-        public enum LinkDeviceResponse { IdFailure, Success, UnAuthorize, NetworkException, ProcessError };
+        public enum LinkDeviceResponse { IdFailure, Success, UnAuthorize, NetworkException, ProcessError ,InternalError};
 
         public async Task<Dictionary<LinkDeviceResponse, string>> LinkDevice(string jsonData)
         {
@@ -59,9 +59,13 @@ namespace AssetTracking.Managers
                     {
                         responseDic.Add(LinkDeviceResponse.UnAuthorize, responseString);
                     }
-                    else //if(response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.Accepted)
+                    else if(response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.Accepted || response.StatusCode == HttpStatusCode.Created || response.StatusCode == HttpStatusCode.NoContent)
                     {
 						responseDic.Add(LinkDeviceResponse.Success, responseString);
+                    }
+                    else
+                    {
+                        responseDic.Add(LinkDeviceResponse.InternalError, responseString);
                     }
                     return responseDic;
                 }
@@ -171,7 +175,7 @@ namespace AssetTracking.Managers
                     }
                     else //if(response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.Accepted)
                     {
-                        responseString = JsonConvert.DeserializeObject<string>(await response.Content.ReadAsStringAsync());
+                        responseString = await response.Content.ReadAsStringAsync();
 
                         responseDic.Add(LinkDeviceResponse.Success, responseString);
 

@@ -91,6 +91,10 @@ namespace AssetTracking
                 ImageScanSensor.Source = "scan_sensor_green.png";
                 ImageScanShipment.Source = "scan_barcode.png";
                 ImageLink.Source = "link.png";
+                
+                ImgSensorBg.Source = "step_white.png";
+                ImgShipmentBg.Source = "step_grey.png";
+                ImgLinkBg.Source = "step_grey.png";
                 textScanSensor.TextColor = Color.FromHex("229f7c");
                 textScanShipment.TextColor = Color.FromHex("2a3129");
                 textLink.TextColor = Color.FromHex("2a3129");
@@ -115,6 +119,9 @@ namespace AssetTracking
                 ImageScanSensor.Source = "checkmark.png";
                 ImageScanShipment.Source = "scan_barcode_green.png";
                 ImageLink.Source = "link.png";
+                ImgSensorBg.Source = "step_grey.png";
+                ImgShipmentBg.Source = "step_white.png";
+                ImgLinkBg.Source = "step_grey.png";
                 textScanSensor.TextColor = Color.FromHex("2a3129");
                 textScanShipment.TextColor = Color.FromHex("229f7c");
                 textLink.TextColor = Color.FromHex("2a3129");
@@ -214,6 +221,9 @@ namespace AssetTracking
                     //ImageScanSensor.Source = "checkmark.png";
                     ImageScanShipment.Source = "checkmark.png";
                     ImageLink.Source = "link_green.png";
+                    ImgSensorBg.Source = "step_grey.png";
+                    ImgShipmentBg.Source = "step_grey.png";
+                    ImgLinkBg.Source = "step_white.png";
                     //textScanSensor.TextColor = Color.FromHex("2a3129");
                     textScanShipment.TextColor = Color.FromHex("2a3129");
                     textLink.TextColor = Color.FromHex("229f7c");
@@ -379,6 +389,15 @@ namespace AssetTracking
                             DisplayAlert("Network Error !!", "Check your connection and Try Again.", "OK");
                         });
                     }
+                    else if (linkResponse.ContainsKey(HttpManager.LinkDeviceResponse.InternalError))
+                    {
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            Loader.IsVisible = false;
+                            DisplayAlert("Internal Server Error !!", "Error in processing your request.", "OK");
+                        });
+                    }
+                    
                 }
             });
 
