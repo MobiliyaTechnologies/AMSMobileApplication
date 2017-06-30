@@ -1,7 +1,9 @@
 ﻿using AssetTracking.Managers;
+using AssetTracking.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,9 +18,16 @@ namespace AssetTracking.pages
     public partial class ReceiveShipment : ContentPage
     {
         ZXingScannerView zxingView;
+        ObservableCollection<AssetStatusModel> AssetStatusCollection;
         public ReceiveShipment()
         {
             InitializeComponent();
+            StatusList.ItemTapped+= (object sender, ItemTappedEventArgs e) => {
+                // don't do anything if we just de-selected the row
+                if (e.Item == null) return;
+                // do something with e.SelectedItem
+                ((ListView)sender).SelectedItem = null; // de-select the row
+            };
             ScanRecieverCode();
         }
         void ScanRecieverCode()
@@ -50,14 +59,14 @@ namespace AssetTracking.pages
                 Loader.IsRunning = true;
                 showScannedData(result.Text);
             });
-           
-            
+
+
             zxingView.OnScanResult -= ZxingView_OnScanResult;
         }
 
         private void showScannedData(string text)
         {
-            string status = null;
+            List<AssetStatusModel> status = null;
             Dictionary<HttpManager.LinkDeviceResponse, string> statusDetails = null;
             Task.Run(async () =>
             {
@@ -67,45 +76,51 @@ namespace AssetTracking.pages
                 Device.BeginInvokeOnMainThread(() =>
                 {
                     Loader.IsVisible = false;
-
-                    if (!string.IsNullOrEmpty(status))
+                    DateTime shipmentDate = DateTime.Now;
+                    string shipmentStatus = "Shipment Status : ";
+                    if (status != null && status.Count == 0)
                     {
-                        string shipmentStatus = "Shipment Status : ";
-                        DateTime shipmentDate = DateTime.Now;
-                        if (Convert.ToBoolean(status))
-                        {
-                            lblStatus.Text = shipmentStatus + "Good";
-                            imgStatus.Source = "thumbsup";
-                        }
-                        else
-                        {
-                            lblStatus.Text = shipmentStatus + "Bad";
-                            imgStatus.Source = "thumbsdown";
-                        }
-                        lblDate.Text = shipmentDate.ToString("dd/MM/yy");
-                        lblTime.Text = shipmentDate.ToString("h:mm tt");
-                        ShipmentId.Text = text;
-                        ScanningContainer.IsVisible = false;
-                        ScannedContainer.IsVisible = true;
+                        lblStatus.Text = shipmentStatus + "Good";
+                        imgStatus.Source = "thumbsup";
+                    }
+                    else if (status != null && status.Count > 0)
+                    {
+                        lblStatus.Text = shipmentStatus + "Bad";
+                        imgStatus.Source = "thumbsdown";
+                        AssetStatusCollection = new ObservableCollection<AssetStatusModel>(status);
+                        lblStatusHeading.Text += AssetStatusCollection.Count;
+                        StatusList.ItemsSource = AssetStatusCollection;
+                        slStatusReasons.IsVisible = true;
+                        //Code to enable visibility for showing list of rule breaker.
                     }
                     else if (status == null)
                     {
                         App.Current.MainPage = new AssetTrackingPage();
                     }
+                    lblDate.Text = shipmentDate.ToString("dd/MM/yy");
+                    lblTime.Text = shipmentDate.ToString("h:mm tt");
+                    ShipmentId.Text = text;
+                    ScanningContainer.IsVisible = false;
+                    ScannedContainer.IsVisible = true;
 
                 });
             });
 
-            
+
         }
 
-        string GetAssetStatus(Dictionary<HttpManager.LinkDeviceResponse, string> typeResponse)
+        List<AssetStatusModel> GetAssetStatus(Dictionary<HttpManager.LinkDeviceResponse, string> typeResponse)
         {
-            string status = null;
+            List<AssetStatusModel> status = null;
 
             if (typeResponse.ContainsKey(HttpManager.LinkDeviceResponse.Success))
             {
-                typeResponse.TryGetValue(HttpManager.LinkDeviceResponse.Success, out status);                
+                string statusJson = null;
+                typeResponse.TryGetValue(HttpManager.LinkDeviceResponse.Success, out statusJson);
+                if (!string.IsNullOrEmpty(statusJson))
+                {
+                    status = JsonConvert.DeserializeObject<List<AssetStatusModel>>(statusJson);
+                }
             }
             else if (typeResponse.ContainsKey(HttpManager.LinkDeviceResponse.IdFailure))
             {
@@ -119,9 +134,9 @@ namespace AssetTracking.pages
             {
                 Device.BeginInvokeOnMainThread(() =>
                 {
-					string statusMsg;
-					typeResponse.TryGetValue(HttpManager.LinkDeviceResponse.ProcessError, out statusMsg);
-					DisplayAlert("Error Occured !!", statusMsg, "OK");
+                    string statusMsg;
+                    typeResponse.TryGetValue(HttpManager.LinkDeviceResponse.ProcessError, out statusMsg);
+                    DisplayAlert("Error Occured !!", statusMsg, "OK");
                     App.Current.MainPage = new AssetTrackingPage();
                 });
             }
@@ -132,14 +147,10 @@ namespace AssetTracking.pages
                     bool action = await DisplayAlert("Un-Authorized !!", "Would you like to Sign-in again ?", "OK", "Cancel");
                     if (action)
                     {
+                        status = new List<AssetStatusModel>();
                         App.Current.MainPage = new LoginPage();
-                        status = "";
                     }
-                    else
-                    {
-                        App.Current.MainPage = new AssetTrackingPage();
-                        status = "";
-                    }
+                    
                 });
 
             }
@@ -163,6 +174,25 @@ namespace AssetTracking.pages
 
         async void Back(object sender, EventArgs args)
         {
+            if (zxingView != null)
+            {
+                zxingView.IsEnabled = false;
+                zxingView.IsScanning = false;
+                ScannerLayout.Children.Remove(zxingView);
+                zxingView = null;
+            }
+            await Navigation.PopModalAsync();
+        }
+        async void Done(object sender, EventArgs args)
+        {
+            if (zxingView != null)
+            {
+                zxingView.IsEnabled = false;
+                zxingView.IsScanning = false;
+                ScannerLayout.Children.Remove(zxingView);
+                zxingView = null;
+            }
+            //await DisplayAlert("Clicked!", "Do you want to go Next?", "OK");
             await Navigation.PopModalAsync();
         }
         protected override void OnAppearing()
@@ -180,5 +210,5 @@ namespace AssetTracking.pages
             }
             base.OnDisappearing();
         }
-    }
+}
 }

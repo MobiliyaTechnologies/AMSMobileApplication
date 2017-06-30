@@ -4,13 +4,13 @@
              x:Class="AssetTracking.pages.DomainConfigPage">
     <ContentPage.Content>
         <Grid>
-            <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="FillAndExpand">
-                <Entry x:Name="txtDomain"   Placeholder="Domain Name" Margin="10,0,10,0"  FontSize="12" HorizontalOptions="FillAndExpand"  />
-                <Button x:Name="btnSubmit" Text="Submit" WidthRequest="100" HorizontalOptions="Center"/>
+            <StackLayout VerticalOptions="CenterAndExpand"  Margin="10,0,10,0">
+                <Entry x:Name="txtDomain"   Placeholder="Domain Name"  FontSize="12" HorizontalOptions="FillAndExpand"  />
+                <Button x:Name="btnSubmit"  BackgroundColor="#3eb493" Text="SUBMIT" TextColor="White"  HorizontalOptions="FillAndExpand"/>
             </StackLayout>
             <Grid x:Name="Loader" IsVisible="False"  HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
                 <ActivityIndicator  IsRunning="True" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"                           
-                           Color="Black" />
+                           Color="#1d1d1d" />
             </Grid>
         </Grid>
         

@@ -9,7 +9,7 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Grid Grid.Row="0" Padding="0" Margin="0" BackgroundColor="#505050" >
+            <Grid Grid.Row="0" Padding="0" Margin="0" BackgroundColor="#333947" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
@@ -29,19 +29,20 @@
 
             </Grid>
             <Grid Grid.Row="1" x:Name="ScanningContainer" RowSpacing="0">
-                <StackLayout x:Name="ContainerLayoutScanner" 
+                <StackLayout x:Name="ContainerLayoutScanner" BackgroundColor="#ffffff"
 						IsVisible="true"
 						VerticalOptions="FillAndExpand">
-                    <StackLayout x:Name="ReceiveLayoutScanner" Orientation="Vertical" VerticalOptions="Center" Padding="20" >
-                        <Grid>
+                    <StackLayout x:Name="ReceiveLayoutScanner" BackgroundColor="#ffffff" Orientation="Vertical" VerticalOptions="Center" Padding="15" >
+                        <Grid >
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*"/>
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
-                            <Image Source="scan_barcode.png" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" />
-                            <Label Grid.Row="1" x:Name="ContailerLayoutReceiveLabel"
+                            <Image Source="scan_barcode.png" Margin="0"  HorizontalOptions="CenterAndExpand" VerticalOptions="EndAndExpand" />
+                            <Label Grid.Row="1" x:Name="ContailerLayoutReceiveLabel"  Margin="0" Font="18"
 						Text="Scan the Barcode on the shipment"
-						VerticalOptions="CenterAndExpand"
+                                   TextColor="#1d1d1d" 
+						VerticalOptions="StartAndExpand"
 							
 						HorizontalOptions="CenterAndExpand"/>
                         </Grid>
@@ -53,50 +54,68 @@
                     </StackLayout>
                 </StackLayout>
             </Grid>
-            <Grid Grid.Row="1" RowSpacing="0" x:Name="ScannedContainer"
-            IsVisible="false" Margin="20" VerticalOptions="FillAndExpand">
-                <StackLayout>
-                    <Image x:Name="imgStatus" Source="qr_scanned.png" />
-                    <Label x:Name="lblStatus"
+            <Grid Grid.Row="1" RowSpacing="0" x:Name="ScannedContainer" BackgroundColor="#ffffff" HorizontalOptions="FillAndExpand"
+            IsVisible="false"  VerticalOptions="FillAndExpand">
+                <StackLayout BackgroundColor="#ffffff" Margin="0" Padding="0" Spacing="0">
+                    <Image x:Name="imgStatus" Margin="0,10,0,0" Source="qr_scanned.png" HorizontalOptions="CenterAndExpand"/>
+                    <Label x:Name="lblStatus" TextColor="#1d1d1d"
 						Text="Successfully Scanned!"
-						Margin="20"
+						Margin="18"
 						HorizontalOptions="CenterAndExpand"/>
-                    <StackLayout x:Name="ShipmentDetails" >
+                    <StackLayout x:Name="ShipmentDetails" Margin="20,0,20,0" >
                         <BoxView HeightRequest="1"
 							HorizontalOptions="FillAndExpand"
-							BackgroundColor="Gray"/>
+							BackgroundColor="#dddddd"/>
                         <StackLayout Orientation="Horizontal" 
 								Margin="0,5,0,5">
-                            <Label Text="ID" />
-                            <Label x:Name="ShipmentId" Text="some_id"
+                            <Label Text="ID" TextColor="#1d1d1d"/>
+                            <Label x:Name="ShipmentId" TextColor="#1d1d1d" Text="some_id"
 								HorizontalOptions="EndAndExpand"/>
                         </StackLayout>
 
                         <BoxView HeightRequest="1"
 								HorizontalOptions="FillAndExpand"
-								BackgroundColor="Gray"/>
+								BackgroundColor="#dddddd"/>
 
                         <StackLayout Orientation="Horizontal"
 								Margin="0,5,0,5">
-                            <Label Text="Date" />
-                            <Label x:Name="lblDate" Text=""
+                            <Label Text="Date" TextColor="#1d1d1d" />
+                            <Label x:Name="lblDate" Text="" TextColor="#1d1d1d"
 								HorizontalOptions="EndAndExpand"/>
                         </StackLayout>
 
                         <BoxView HeightRequest="1"
 								HorizontalOptions="FillAndExpand"
-								BackgroundColor="Gray"/>
+								BackgroundColor="#dddddd"/>
                         <StackLayout Orientation="Horizontal"
 								Margin="0,5,0,5">
-                            <Label Text="Time" />
-                            <Label x:Name="lblTime" Text=""
+                            <Label Text="Time" TextColor="#1d1d1d" />
+                            <Label x:Name="lblTime" TextColor="#1d1d1d" Text=""
 								HorizontalOptions="EndAndExpand"/>
                         </StackLayout>
 
                         <BoxView HeightRequest="1"
 								HorizontalOptions="FillAndExpand"
-								BackgroundColor="Gray">
+								BackgroundColor="#dddddd">
                         </BoxView>
+                        <StackLayout x:Name="slStatusReasons" IsVisible="False"  VerticalOptions="StartAndExpand" Orientation="Vertical">
+                            <Label x:Name="lblStatusHeading"  Text="Rule(s) Break : " TextColor="#1d1d1d"/>                            
+                            <ListView x:Name="StatusList" >
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <ViewCell>
+                                            <StackLayout Margin="10,0,10,0">
+                                                <StackLayout Orientation="Horizontal" Margin="0,5,0,5">
+                                                    <Label Text="{Binding Capability}" TextColor="#1d1d1d"/>
+                                                    <Label Text="{Binding Value}" HorizontalOptions="EndAndExpand" TextColor="#1d1d1d"/>
+                                                </StackLayout>
+                                                <Label TextColor="#1d1d1d" Text="{Binding Timestamp ,StringFormat={}{0:dd/MM/yy}}" HorizontalOptions="EndAndExpand"/>
+                                            </StackLayout>
+                                        </ViewCell>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </StackLayout>
                         <!-- <StackLayout Orientation="Horizontal"
 								Margin="0,5,0,5">
                         <Label Text="Content" />
@@ -106,15 +125,23 @@
 
                     <BoxView HeightRequest="1"
 								HorizontalOptions="FillAndExpand"
-								BackgroundColor="Gray">
+								BackgroundColor="#dddddd">
                     </BoxView>-->
+                    </StackLayout>
+                    <StackLayout VerticalOptions="EndAndExpand" Margin="0" Padding="0" Spacing="0">
+                        <Button x:Name="ButtonNext" VerticalOptions="EndAndExpand" Margin="0"  BorderRadius="0" BorderWidth="0"
+								Text="DONE"
+                                Clicked="Done"
+	           					TextColor="White"
+								HorizontalOptions="FillAndExpand"
+								BackgroundColor="#3eb493"/>
                     </StackLayout>
                 </StackLayout>
             </Grid>
         </Grid>
-        
-            <ActivityIndicator x:Name="Loader" IsVisible="False" IsRunning="True" IsEnabled="True" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"                           
-                           Color="Black" />
-       
+
+        <ActivityIndicator x:Name="Loader" IsVisible="False" IsRunning="True" IsEnabled="True" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"                           
+                          Color="#1d1d1d" />
+
     </Grid>
 </ContentPage>
