@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>AssetTracking.Droid</RootNamespace>
     <AssemblyName>AssetTracking.Droid</AssemblyName>
-    <TargetFrameworkVersion>v6.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v7.1</TargetFrameworkVersion>
     <AndroidApplication>True</AndroidApplication>
     <AndroidResgenFile>Resources\Resource.designer.cs</AndroidResgenFile>
     <AndroidResgenClass>Resource</AndroidResgenClass>
@@ -48,6 +48,14 @@
   <ItemGroup>
     <Reference Include="FormsViewGroup, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Xamarin.Forms.2.3.4.247\lib\MonoAndroid10\FormsViewGroup.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Identity.Client, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Identity.Client.1.0.304142221-alpha\lib\MonoAndroid10\Microsoft.Identity.Client.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Identity.Client.Platform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Identity.Client.1.0.304142221-alpha\lib\MonoAndroid10\Microsoft.Identity.Client.Platform.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />

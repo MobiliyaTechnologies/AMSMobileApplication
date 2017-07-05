@@ -22,11 +22,11 @@ namespace AssetTracking.pages
         public ReceiveShipment()
         {
             InitializeComponent();
-            StatusList.ItemTapped+= (object sender, ItemTappedEventArgs e) => {
-                // don't do anything if we just de-selected the row
+            StatusList.ItemTapped += (object sender, ItemTappedEventArgs e) =>
+            {
+                //We are just de-selecting a row here
                 if (e.Item == null) return;
-                // do something with e.SelectedItem
-                ((ListView)sender).SelectedItem = null; // de-select the row
+                ((ListView)sender).SelectedItem = null;
             };
             ScanRecieverCode();
         }
@@ -51,16 +51,12 @@ namespace AssetTracking.pages
         {
             Device.BeginInvokeOnMainThread(() =>
             {
-                //To Do
-                //Code to call api and give proper response
                 zxingView.IsEnabled = false;
                 ScanningContainer.IsVisible = false;
                 Loader.IsVisible = true;
                 Loader.IsRunning = true;
                 showScannedData(result.Text);
             });
-
-
             zxingView.OnScanResult -= ZxingView_OnScanResult;
         }
 
@@ -91,7 +87,6 @@ namespace AssetTracking.pages
                         lblStatusHeading.Text += AssetStatusCollection.Count;
                         StatusList.ItemsSource = AssetStatusCollection;
                         slStatusReasons.IsVisible = true;
-                        //Code to enable visibility for showing list of rule breaker.
                     }
                     else if (status == null)
                     {
@@ -102,11 +97,8 @@ namespace AssetTracking.pages
                     ShipmentId.Text = text;
                     ScanningContainer.IsVisible = false;
                     ScannedContainer.IsVisible = true;
-
                 });
             });
-
-
         }
 
         List<AssetStatusModel> GetAssetStatus(Dictionary<HttpManager.LinkDeviceResponse, string> typeResponse)
@@ -140,26 +132,19 @@ namespace AssetTracking.pages
                     App.Current.MainPage = new AssetTrackingPage();
                 });
             }
-            else if (typeResponse.ContainsKey(HttpManager.LinkDeviceResponse.UnAuthorize))
-            {
-                Device.BeginInvokeOnMainThread(async () =>
-                {
-                    bool action = await DisplayAlert("Un-Authorized !!", "Would you like to Sign-in again ?", "OK", "Cancel");
-                    if (action)
-                    {
-                        status = new List<AssetStatusModel>();
-                        App.Current.MainPage = new LoginPage();
-                    }
-                    
-                });
-
-            }
             else if (typeResponse.ContainsKey(HttpManager.LinkDeviceResponse.NetworkException))
             {
                 Device.BeginInvokeOnMainThread(() =>
                 {
                     DisplayAlert("Network Error !!", "Check your connection and Try Again.", "OK");
                     App.Current.MainPage = new AssetTrackingPage();
+                });
+            }
+            else if (typeResponse.ContainsKey(HttpManager.LinkDeviceResponse.InternalError))
+            {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    DisplayAlert("Internal Server Error !!", "Error in processing your request.", "OK");
                 });
             }
             return status;
@@ -171,7 +156,6 @@ namespace AssetTracking.pages
             Dictionary<HttpManager.LinkDeviceResponse, string> typeResponse = await HttpManager.GetInstance().GetAssetStatus(requestStr);
             return typeResponse;
         }
-
         async void Back(object sender, EventArgs args)
         {
             if (zxingView != null)
@@ -192,13 +176,11 @@ namespace AssetTracking.pages
                 ScannerLayout.Children.Remove(zxingView);
                 zxingView = null;
             }
-            //await DisplayAlert("Clicked!", "Do you want to go Next?", "OK");
             await Navigation.PopModalAsync();
         }
         protected override void OnAppearing()
         {
             base.OnAppearing();
-
             zxingView.IsScanning = true;
         }
 
@@ -210,5 +192,5 @@ namespace AssetTracking.pages
             }
             base.OnDisappearing();
         }
-}
+    }
 }
