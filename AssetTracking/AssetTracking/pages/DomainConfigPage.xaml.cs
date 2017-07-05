@@ -1,6 +1,8 @@
-﻿using AssetTracking.Managers;
+﻿using AssetTracking.DependencyServices;
+using AssetTracking.Managers;
 using AssetTracking.Models;
 using AssetTracking.Utilities;
+using Microsoft.Identity.Client;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -20,7 +22,6 @@ namespace AssetTracking.pages
         {
             InitializeComponent();
             btnSubmit.Clicked += BtnSubmit_Clicked;
-
         }
 
         private async void BtnSubmit_Clicked(object sender, EventArgs e)
@@ -28,7 +29,7 @@ namespace AssetTracking.pages
             string domainName = txtDomain.Text;
            if (string.IsNullOrEmpty(domainName))
             {
-                DisplayAlert("Error!", "Domain address should not be null", "OK");
+                DisplayAlert("Error!", "Domain address should not be blank.", "OK");
             }
            else
             {
@@ -44,16 +45,52 @@ namespace AssetTracking.pages
                     B2CConfiguration config = JsonConvert.DeserializeObject<B2CConfiguration>(jsonResp);
                     if (config.B2cClientId != null && config.B2cMobileInstanceUrl != null && config.B2cMobileRedirectUrl != null && config.B2cMobileTokenUrl != null && config.B2cSignUpInPolicyId != null && config.B2cTenant != null)
                     {
-                        Application.Current.Properties[Constants.APP_CONFIGURATION_KEY] = jsonResp;
                         B2CConfigManager.GetInstance().Initialize(config);
-                        App.Current.MainPage = new LoginPage();
+                        AuthenticationManager.GetInstance().InitializeAuthClient(config.B2cClientId);
+                        Application.Current.Properties[Constants.APP_CONFIGURATION_KEY] = jsonResp;
+                        try
+                        {
+                            Dictionary<AuthenticationManager.AuthResponse, object> response = await AuthenticationManager.GetInstance().AquireTokenAsync();
+                            if(response.Count!=0)
+                            {
+                                if(response.ContainsKey(AuthenticationManager.AuthResponse.AuthResult))
+                                {
+                                    //We might need to save anything for future use
+                                   App.Current.MainPage= new AssetTrackingPage();
+                                }
+                                //We might need to add else if if response condition inreases
+                                else
+                                {
+                                    object errorMsg = null;
+                                    response.TryGetValue(AuthenticationManager.AuthResponse.Error, out errorMsg);
+                                    if(errorMsg!=null)
+                                    {
+                                        await DisplayAlert("Authentication Error", errorMsg.ToString(), "OK");
+                                    }
+                                    else
+                                    {
+                                        await DisplayAlert("Authentication Error !!", "Error occured while Authentication", "OK");
+                                    }           
+                                }
+                            }
+
+                            Device.BeginInvokeOnMainThread(() =>
+                            {
+                                Loader.IsVisible = false;
+                            });
+                        }
+                        catch (Exception ex)
+                        {
+                            Loader.IsVisible = false;
+                            await DisplayAlert("Authentication Error", ex.Message, "OK");
+                        }
                     }
                     else
                     {
                         Device.BeginInvokeOnMainThread(() =>
                         {
                             Loader.IsVisible = false;
-                            DisplayAlert("Error!", "Fetched data has some null values for B2C login", "OK");
+                            DisplayAlert("Error!", "Failed to get all configuration for this domain.", "OK");
                         });
                     }
                 }
@@ -62,7 +99,7 @@ namespace AssetTracking.pages
                     Device.BeginInvokeOnMainThread(() =>
                     {
                         Loader.IsVisible = false;
-                        DisplayAlert("Error!", "Problem in fetching proper data from server", "OK");
+                        DisplayAlert("Error!", "Problem in fetching configuration data from server.Check your domain name.", "OK");
                     });
                 }
                 

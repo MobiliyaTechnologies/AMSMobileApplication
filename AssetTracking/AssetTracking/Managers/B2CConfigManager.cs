@@ -41,6 +41,22 @@ namespace AssetTracking.Managers
             return tokenUrl;
         }
 
+        public string[] GetB2CScopes()
+        {
+            string[] arr = { configuration.B2cClientId };
+            return arr;
+        }
+
+        public string GetB2CAuthority()
+        {
+            string authority = "https://login.microsoftonline.com/"+configuration.B2cTenant+"/";
+            return authority;
+        }
+        public string GetSignInUpID()
+        {
+            return configuration.B2cSignUpInPolicyId;
+        }
+
 
     }
 }
