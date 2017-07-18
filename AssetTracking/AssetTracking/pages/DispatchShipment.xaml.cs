@@ -4,6 +4,7 @@ using AssetTracking.pages;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using ZXing.Net.Mobile.Forms;
@@ -18,10 +19,14 @@ namespace AssetTracking
         bool stepLink = false;
         string sensorId = null;
         string shipmentId = null;
+        CancellationTokenSource cts = null;
+        CancellationToken cancellationToken;
 
         public DispatchShipment()
         {
             InitializeComponent();
+            cts = new CancellationTokenSource();
+            cancellationToken = cts.Token;
             ContainerLayoutScanner.IsVisible = true;
             DispatchLayoutScanner.IsVisible = true;
             ContainerLinking.IsVisible = true;
@@ -148,38 +153,44 @@ namespace AssetTracking
             {
                 string sensorType = null;
                 Dictionary<HttpManager.LinkDeviceResponse, string> sensorDetails = null;
-                Task.Run(async () =>
+                try
                 {
-                    sensorDetails = await GetSensorDetailsFromServer(data);
-                    sensorType = GetSensorType(sensorDetails);
-                    if (sensorType == null)
-                    {
-                        Device.BeginInvokeOnMainThread(() =>
-                    {
-                        App.Current.MainPage = new AssetTrackingPage();
-                    });
-                        return;
-                    }
-                    else if (sensorType == "")
-                    {
-                        return;
-                    }
-                    Device.BeginInvokeOnMainThread(() =>
-                    {
-                        Loader.IsVisible = false;
-                        ContainerScanningSteps.IsVisible = false;
-                        sensorId = data;
-                        SensorID.Text = data;
-                        SensorType.Text = sensorType;
-                        detailImage.Source = "qr_scanned.png";
-                        SensorDetails.IsVisible = true;
-                        ShipmentDetails.IsVisible = false;
-                        ContainerLayoutScanner.IsVisible = false;
-                        ContainerLayoutDetails.IsVisible = true;
-                        ContainerLayoutLink.IsVisible = false;
-                        DispatchTitle.Text = "Sensor Details";
-                    });
-                });
+                    Task.Run(async () =>
+                            {
+                                sensorDetails = await GetSensorDetailsFromServer(data);
+                                sensorType = GetSensorType(sensorDetails);
+                                if (sensorType == null)
+                                {
+                                    Device.BeginInvokeOnMainThread(() =>
+                                {
+                                    App.Current.MainPage = new AssetTrackingPage();
+                                });
+                                    return;
+                                }
+                                else if (sensorType == "")
+                                {
+                                    return;
+                                }
+                                Device.BeginInvokeOnMainThread(() =>
+                                {
+                                    Loader.IsVisible = false;
+                                    ContainerScanningSteps.IsVisible = false;
+                                    sensorId = data;
+                                    SensorID.Text = data;
+                                    SensorType.Text = sensorType;
+                                    detailImage.Source = "qr_scanned.png";
+                                    SensorDetails.IsVisible = true;
+                                    ShipmentDetails.IsVisible = false;
+                                    ContainerLayoutScanner.IsVisible = false;
+                                    ContainerLayoutDetails.IsVisible = true;
+                                    ContainerLayoutLink.IsVisible = false;
+                                    DispatchTitle.Text = "Sensor Details";
+                                });
+                            }, cancellationToken);
+                }
+                catch (Exception)
+                {
+                }
             }
             else if (stepScanShipment)
             {
@@ -262,6 +273,10 @@ namespace AssetTracking
                 ScannerLayout.Children.Remove(zxingView);
                 zxingView = null;
             }
+            if(cts!=null)
+            {
+                cts.Cancel();
+            }
             await Navigation.PopModalAsync();
         }
 
@@ -278,84 +293,96 @@ namespace AssetTracking
             {
                 Loader.IsVisible = true;
             });
-            Task.Run(async () =>
+            try
             {
-                if (string.IsNullOrWhiteSpace(sensorId))
-                {
-                    Device.BeginInvokeOnMainThread(() =>
-                    {
-                        Loader.IsVisible = false;
-                        DisplayAlert("Error Occured !!", "Invalid Sensor", "OK");
-                    });
-                }
-                else if (string.IsNullOrWhiteSpace(shipmentId))
-                {
-                    Device.BeginInvokeOnMainThread(() =>
-                    {
-                        Loader.IsVisible = false;
-                        DisplayAlert("Error Occured !!", "Invalid Shipment", "OK");
-                    });
-                }
-                else
-                {
-                    LinkInfoModel requestModel = new LinkInfoModel() { AssetBarcode = shipmentId, SensorKey = sensorId };
-                    string jsonRequestData = JsonConvert.SerializeObject(requestModel);
-                    Dictionary<HttpManager.LinkDeviceResponse, string> linkResponse = await HttpManager.GetInstance().LinkDevice(jsonRequestData);
-                    if (linkResponse.ContainsKey(HttpManager.LinkDeviceResponse.Success))
-                    {
-                        Device.BeginInvokeOnMainThread(() =>
-                        {
-                            Loader.IsVisible = false;
-                            ContainerLinking.IsVisible = false;
-                            ContainerLinked.IsVisible = true;
-                        });
-                    }
-                    else if (linkResponse.ContainsKey(HttpManager.LinkDeviceResponse.IdFailure))
-                    {
-                        Device.BeginInvokeOnMainThread(() =>
-                        {
-                            Loader.IsVisible = false;
-                            DisplayAlert("Error Occured !!", "This sensor is not registered with us.", "OK");
-                        });
-                    }
-                    else if (linkResponse.ContainsKey(HttpManager.LinkDeviceResponse.ProcessError))
-                    {
-                        Device.BeginInvokeOnMainThread(() =>
-                        {
-                            Loader.IsVisible = false;
-                            string responseMsg = null;
-                            linkResponse.TryGetValue(HttpManager.LinkDeviceResponse.ProcessError, out responseMsg);
-                            if (responseMsg != null)
-                            {
-                                DisplayAlert("Error Occured !!", responseMsg, "OK");
-                            }
-                            else
-                            {
-                                DisplayAlert("Error Occured !!", "Error while processing your request.", "OK");
-                            }
+                Task.Run(async () =>
+                   {
+                       if (string.IsNullOrWhiteSpace(sensorId))
+                       {
+                           Device.BeginInvokeOnMainThread(() =>
+                           {
+                               Loader.IsVisible = false;
+                               DisplayAlert("Error Occured !!", "Invalid Sensor", "OK");
+                           });
+                       }
+                       else if (string.IsNullOrWhiteSpace(shipmentId))
+                       {
+                           Device.BeginInvokeOnMainThread(() =>
+                           {
+                               Loader.IsVisible = false;
+                               DisplayAlert("Error Occured !!", "Invalid Shipment", "OK");
+                           });
+                       }
+                       else
+                       {
+                           LinkInfoModel requestModel = new LinkInfoModel() { AssetBarcode = shipmentId, SensorKey = sensorId };
+                           string jsonRequestData = JsonConvert.SerializeObject(requestModel);
+                           Dictionary<HttpManager.LinkDeviceResponse, string> linkResponse = await HttpManager.GetInstance().LinkDevice(jsonRequestData, cancellationToken);
+                           if (linkResponse.ContainsKey(HttpManager.LinkDeviceResponse.Success))
+                           {
+                               Device.BeginInvokeOnMainThread(() =>
+                               {
+                                   Loader.IsVisible = false;
+                                   ContainerLinking.IsVisible = false;
+                                   ContainerLinked.IsVisible = true;
+                               });
+                           }
+                           else if (linkResponse.ContainsKey(HttpManager.LinkDeviceResponse.IdFailure))
+                           {
+                               Device.BeginInvokeOnMainThread(() =>
+                               {
+                                   Loader.IsVisible = false;
+                                   DisplayAlert("Error Occured !!", "This sensor is not registered with us.", "OK");
+                               });
+                           }
+                           else if (linkResponse.ContainsKey(HttpManager.LinkDeviceResponse.ProcessError))
+                           {
+                               Device.BeginInvokeOnMainThread(() =>
+                               {
+                                   Loader.IsVisible = false;
+                                   string responseMsg = null;
+                                   linkResponse.TryGetValue(HttpManager.LinkDeviceResponse.ProcessError, out responseMsg);
+                                   if (responseMsg != null)
+                                   {
+                                       DisplayAlert("Error Occured !!", responseMsg, "OK");
+                                   }
+                                   else
+                                   {
+                                       DisplayAlert("Error Occured !!", "Error while processing your request.", "OK");
+                                   }
 
-                        });
-                    }
-                    else if (linkResponse.ContainsKey(HttpManager.LinkDeviceResponse.NetworkException))
-                    {
-                        Device.BeginInvokeOnMainThread(() =>
-                        {
-                            Loader.IsVisible = false;
-                            DisplayAlert("Network Error !!", "Check your connection and Try Again.", "OK");
-                        });
-                    }
-                    else if (linkResponse.ContainsKey(HttpManager.LinkDeviceResponse.InternalError))
-                    {
-                        Device.BeginInvokeOnMainThread(() =>
-                        {
-                            Loader.IsVisible = false;
-                            DisplayAlert("Internal Server Error !!", "Error in processing your request.", "OK");
-                        });
-                    }
-                }
-            });
+                               });
+                           }
+                           else if (linkResponse.ContainsKey(HttpManager.LinkDeviceResponse.NetworkException))
+                           {
+                               Device.BeginInvokeOnMainThread(() =>
+                               {
+                                   Loader.IsVisible = false;
+                                   DisplayAlert("Network Error !!", "Check your connection and Try Again.", "OK");
+                               });
+                           }
+                           else if (linkResponse.ContainsKey(HttpManager.LinkDeviceResponse.InternalError))
+                           {
+                               Device.BeginInvokeOnMainThread(() =>
+                               {
+                                   Loader.IsVisible = false;
+                                   DisplayAlert("Internal Server Error !!", "Error in processing your request.", "OK");
+                               });
+                           }
+                           else if (linkResponse.ContainsKey(HttpManager.LinkDeviceResponse.TaskCancelled))
+                           {
+                               Device.BeginInvokeOnMainThread(() =>
+                               {
+                                   Loader.IsVisible = false;
+                               });
+                           }
+                       }
+                   }, cancellationToken);
+            }
+            catch (Exception)
+            {
 
-
+            }
         }
 
 
@@ -369,7 +396,7 @@ namespace AssetTracking
         async Task<Dictionary<HttpManager.LinkDeviceResponse, string>> GetSensorDetailsFromServer(string sensorId)
         {
             string requestId = JsonConvert.SerializeObject(sensorId);
-            Dictionary<HttpManager.LinkDeviceResponse, string> typeResponse = await HttpManager.GetInstance().GetSensorTypeFromID(requestId);
+            Dictionary<HttpManager.LinkDeviceResponse, string> typeResponse = await HttpManager.GetInstance().GetSensorTypeFromID(requestId, cancellationToken);
             return typeResponse;
         }
 
@@ -417,10 +444,19 @@ namespace AssetTracking
                     DisplayAlert("Internal Server Error !!", "Error in processing your request.", "OK");
                 });
             }
+            else if (typeResponse.ContainsKey(HttpManager.LinkDeviceResponse.TaskCancelled))
+            {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    Loader.IsVisible = false;
+                });
+            }
             return sensorType;
         }
-
-
-
+        protected override bool OnBackButtonPressed()
+        {
+            this.Back(null,null);
+            return true;
+        }
     }
 }

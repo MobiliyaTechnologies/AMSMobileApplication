@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Xamarin.Forms;
@@ -19,9 +20,13 @@ namespace AssetTracking.pages
     {
         ZXingScannerView zxingView;
         ObservableCollection<AssetStatusModel> AssetStatusCollection;
+        CancellationTokenSource cts;
+        CancellationToken cancellationToken;
         public ReceiveShipment()
         {
             InitializeComponent();
+            cts = new CancellationTokenSource();
+            cancellationToken = cts.Token;
             StatusList.ItemTapped += (object sender, ItemTappedEventArgs e) =>
             {
                 //We are just de-selecting a row here
@@ -62,43 +67,49 @@ namespace AssetTracking.pages
 
         private void showScannedData(string text)
         {
-            List<AssetStatusModel> status = null;
-            Dictionary<HttpManager.LinkDeviceResponse, string> statusDetails = null;
-            Task.Run(async () =>
+            try
             {
-                statusDetails = await GetAssetStatusFromServer(text);
-                status = GetAssetStatus(statusDetails);
-
-                Device.BeginInvokeOnMainThread(() =>
+                List<AssetStatusModel> status = null;
+                Dictionary<HttpManager.LinkDeviceResponse, string> statusDetails = null;
+                Task.Run(async () =>
                 {
-                    Loader.IsVisible = false;
-                    DateTime shipmentDate = DateTime.Now;
-                    string shipmentStatus = "Shipment Status : ";
-                    if (status != null && status.Count == 0)
+                    statusDetails = await GetAssetStatusFromServer(text);
+                    status = GetAssetStatus(statusDetails);
+
+                    Device.BeginInvokeOnMainThread(() =>
                     {
-                        lblStatus.Text = shipmentStatus + "Good";
-                        imgStatus.Source = "thumbsup";
-                    }
-                    else if (status != null && status.Count > 0)
-                    {
-                        lblStatus.Text = shipmentStatus + "Bad";
-                        imgStatus.Source = "thumbsdown";
-                        AssetStatusCollection = new ObservableCollection<AssetStatusModel>(status);
-                        lblStatusHeading.Text += AssetStatusCollection.Count;
-                        StatusList.ItemsSource = AssetStatusCollection;
-                        slStatusReasons.IsVisible = true;
-                    }
-                    else if (status == null)
-                    {
-                        App.Current.MainPage = new AssetTrackingPage();
-                    }
-                    lblDate.Text = shipmentDate.ToString("dd/MM/yy");
-                    lblTime.Text = shipmentDate.ToString("h:mm tt");
-                    ShipmentId.Text = text;
-                    ScanningContainer.IsVisible = false;
-                    ScannedContainer.IsVisible = true;
-                });
-            });
+                        Loader.IsVisible = false;
+                        DateTime shipmentDate = DateTime.Now;
+                        string shipmentStatus = "Shipment Status : ";
+                        if (status != null && status.Count == 0)
+                        {
+                            lblStatus.Text = shipmentStatus + "Good";
+                            imgStatus.Source = "thumbsup";
+                        }
+                        else if (status != null && status.Count > 0)
+                        {
+                            lblStatus.Text = shipmentStatus + "Bad";
+                            imgStatus.Source = "thumbsdown";
+                            AssetStatusCollection = new ObservableCollection<AssetStatusModel>(status);
+                            lblStatusHeading.Text += AssetStatusCollection.Count;
+                            StatusList.ItemsSource = AssetStatusCollection;
+                            slStatusReasons.IsVisible = true;
+                        }
+                        else if (status == null)
+                        {
+                            App.Current.MainPage = new AssetTrackingPage();
+                        }
+                        lblDate.Text = shipmentDate.ToString("dd/MM/yy");
+                        lblTime.Text = shipmentDate.ToString("h:mm tt");
+                        ShipmentId.Text = text;
+                        ScanningContainer.IsVisible = false;
+                        ScannedContainer.IsVisible = true;
+                    });
+                }, cancellationToken);
+            }
+            catch (Exception e)
+            {
+            }
         }
 
         List<AssetStatusModel> GetAssetStatus(Dictionary<HttpManager.LinkDeviceResponse, string> typeResponse)
@@ -153,7 +164,7 @@ namespace AssetTracking.pages
         async Task<Dictionary<HttpManager.LinkDeviceResponse, string>> GetAssetStatusFromServer(string assetId)
         {
             string requestStr = JsonConvert.SerializeObject(assetId);
-            Dictionary<HttpManager.LinkDeviceResponse, string> typeResponse = await HttpManager.GetInstance().GetAssetStatus(requestStr);
+            Dictionary<HttpManager.LinkDeviceResponse, string> typeResponse = await HttpManager.GetInstance().GetAssetStatus(requestStr, cancellationToken);
             return typeResponse;
         }
         async void Back(object sender, EventArgs args)
@@ -164,6 +175,10 @@ namespace AssetTracking.pages
                 zxingView.IsScanning = false;
                 ScannerLayout.Children.Remove(zxingView);
                 zxingView = null;
+            }
+            if (cts != null)
+            {
+                cts.Cancel();
             }
             await Navigation.PopModalAsync();
         }
@@ -191,6 +206,11 @@ namespace AssetTracking.pages
                 zxingView.IsScanning = false;
             }
             base.OnDisappearing();
+        }
+        protected override bool OnBackButtonPressed()
+        {
+            this.Back(null, null);
+            return true;
         }
     }
 }
