@@ -3,11 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleDisplayName</key>
-	<string>AssetTracking</string>
+	<string>ASTRA</string>
 	<key>CFBundleName</key>
 	<string>AssetTracking</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.mobiliya.assettracking.assettracking</string>
+	<string>com.mobiliya.assetmonitoring</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleVersion</key>

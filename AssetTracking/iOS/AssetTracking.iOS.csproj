@@ -194,8 +194,6 @@
     <BundleResource Include="Resources\scan_barcode.png" />
     <BundleResource Include="Resources\scan_barcode_green.png" />
     <BundleResource Include="Resources\scan_sensor_green.png" />
-    <BundleResource Include="Resources\thumbsdown.png" />
-    <BundleResource Include="Resources\thumbsup.png" />
     <BundleResource Include="Resources\dispatch%402x.png" />
     <BundleResource Include="Resources\dispatch%403x.png" />
     <BundleResource Include="Resources\receive%402x.png" />
@@ -218,12 +216,6 @@
     <BundleResource Include="Resources\link_selected.png" />
     <BundleResource Include="Resources\link_selected%402x.png" />
     <BundleResource Include="Resources\link_selected%403x.png" />
-    <BundleResource Include="Resources\shipment_status_bad.png" />
-    <BundleResource Include="Resources\shipment_status_bad%402x.png" />
-    <BundleResource Include="Resources\shipment_status_bad%403x.png" />
-    <BundleResource Include="Resources\shipment_status_good.png" />
-    <BundleResource Include="Resources\shipment_status_good%402x.png" />
-    <BundleResource Include="Resources\shipment_status_good%403x.png" />
     <BundleResource Include="Resources\back%402x.png" />
     <BundleResource Include="Resources\back%403x.png" />
     <BundleResource Include="Resources\bg%402x.png" />
@@ -245,6 +237,21 @@
       <Project>{89aecb06-f3f4-416f-8b53-42833ccd2176}</Project>
       <Name>AssetTracking</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\scan_barcode_orange%402x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\scan_barcode_orange%403x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\scan_barcode_orange.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\thumbsup.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\thumbsdown.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Import Project="..\packages\Xamarin.Forms.2.3.4.247\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.2.3.4.247\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets')" />

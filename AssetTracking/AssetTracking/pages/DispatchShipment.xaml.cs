@@ -96,9 +96,9 @@ namespace AssetTracking
                 ImgSensorBg.Source = "step_white.png";
                 ImgShipmentBg.Source = "step_grey.png";
                 ImgLinkBg.Source = "step_grey.png";
-                textScanSensor.TextColor = Color.FromHex("229f7c");
-                textScanShipment.TextColor = Color.FromHex("2a3129");
-                textLink.TextColor = Color.FromHex("2a3129");
+                textScanSensor.TextColor = Color.FromHex("#2fbadd");
+                textScanShipment.TextColor = Color.FromHex("#878ca1");
+                textLink.TextColor = Color.FromHex("#878ca1");
                 ContailerLayoutLabel.Text = "Scan Sensor's QR Code";
                 if (zxingView == null)
                 {
@@ -122,9 +122,9 @@ namespace AssetTracking
                 ImgSensorBg.Source = "step_grey.png";
                 ImgShipmentBg.Source = "step_white.png";
                 ImgLinkBg.Source = "step_grey.png";
-                textScanSensor.TextColor = Color.FromHex("2a3129");
-                textScanShipment.TextColor = Color.FromHex("229f7c");
-                textLink.TextColor = Color.FromHex("2a3129");
+                textScanSensor.TextColor = Color.FromHex("#878ca1");
+                textScanShipment.TextColor = Color.FromHex("#2fbadd");
+                textLink.TextColor = Color.FromHex("#878ca1");
                 ContailerLayoutLabel.Text = "Scan Shipment's Barcode";
                 zxingView.OnScanResult += ZxingView_OnScanResult;
             }
@@ -218,8 +218,8 @@ namespace AssetTracking
                     ImgShipmentBg.Source = "step_grey.png";
                     ImgLinkBg.Source = "step_white.png";
                     //textScanSensor.TextColor = Color.FromHex("2a3129");
-                    textScanShipment.TextColor = Color.FromHex("2a3129");
-                    textLink.TextColor = Color.FromHex("229f7c");
+                    textScanShipment.TextColor = Color.FromHex("#878ca1");
+                    textLink.TextColor = Color.FromHex("#2fbadd");
                     SensorDetails.IsVisible = false;
                     ShipmentDetails.IsVisible = false;
                     ContainerLayoutScanner.IsVisible = false;
