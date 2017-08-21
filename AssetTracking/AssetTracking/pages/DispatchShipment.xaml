@@ -21,16 +21,19 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Image Source="back.png" Grid.Column="0" Margin="20, 20, 20, 20">
-                    <Grid.GestureRecognizers>
-                        <TapGestureRecognizer Tapped="Back"/>
-                    </Grid.GestureRecognizers>
-                </Image>
+                    
+                        <Image Source="back.png"  Margin="10,0,0,0"  Grid.Column="0" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="Back"/>
+                            </Grid.GestureRecognizers>
+                        </Image>
+                
                 <Label x:Name="DispatchTitle"
 						FontSize="24" 
 						Text="Scan Sensor" 
 						TextColor="White"
                         Grid.Column="1"
+                       Margin="10,10,0,10"
 	          			HorizontalOptions="Start" 
 						VerticalOptions="Center"/>
                 

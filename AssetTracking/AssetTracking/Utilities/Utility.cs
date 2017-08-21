@@ -29,6 +29,13 @@ namespace AssetTracking.Utilities
             }
 
         }
-        
+
+        public static double GetTimezoneDifference()
+        {
+            System.TimeZoneInfo localZone = System.TimeZoneInfo.Local;
+            TimeSpan localTimeOffset = localZone.GetUtcOffset(DateTime.Now);
+            return localTimeOffset.TotalHours;
+        }
+
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AssetTracking.Managers;
 using AssetTracking.Models;
+using AssetTracking.Utilities;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -123,6 +124,10 @@ namespace AssetTracking.pages
                 if (!string.IsNullOrEmpty(statusJson))
                 {
                     status = JsonConvert.DeserializeObject<List<AssetStatusModel>>(statusJson);
+                    foreach(var item in status)
+                    {
+                        item.Timestamp = item.Timestamp.AddHours(Utility.GetTimezoneDifference());
+                    }
                 }
             }
             else if (typeResponse.ContainsKey(HttpManager.LinkDeviceResponse.IdFailure))
