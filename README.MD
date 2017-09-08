@@ -1,5 +1,6 @@
 # ASTRA Mobile App
 
+ASTRA mobile app is a Xamarin Forms(Cross Platform) app build for supporting Android and IOS devices.
 
 ## Getting Started
 
@@ -20,13 +21,13 @@
 
 ### Prerequisites
 
-* Asset Tracking Web App and REST Server deployement 
-* REST API Server URL for configuring mobile apps.
-* Supports Android OS 4+.
-* Supports IOS 8+.
-* Allows Photo Capture Capability to app.
-* Valid Sensor key(in QR code format)
-* Valid Asset key (in Barcode format)
+    * Asset Tracking Web App and REST Server deployement 
+    * REST API Server URL for configuring mobile apps.
+    * Supports Android OS 4+.
+    * Supports IOS 8+.
+    * Allows Photo Capture Capability to app.
+    * Valid Sensor key(in QR code format)
+    * Valid Asset key (in Barcode format)
 
 
 
@@ -42,6 +43,6 @@
     
 ## Built With
 
-* [Visual Studio 2017](https://www.visualstudio.com/downloads/) - The IDE
-* [Xamarin Studio for Mac](https://developer.xamarin.com/releases/studio/) - The IDE
+    * [Visual Studio 2017](https://www.visualstudio.com/downloads/) - The IDE
+    * [Xamarin Studio for Mac](https://developer.xamarin.com/releases/studio/) - The IDE
 
