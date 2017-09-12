@@ -1,0 +1,279 @@
+﻿using AssetTracking.Models;
+using AssetTracking.Utilities;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using Xamarin.Forms;
+
+namespace AssetTracking.Managers
+{
+    public class HttpManager
+    {
+        private static HttpManager _instance;
+        private HttpManager()
+        {
+
+        }
+        public static HttpManager GetInstance()
+        {
+            if (_instance == null)
+            {
+                _instance = new HttpManager();
+            }
+            return _instance;
+        }
+
+        public enum LinkDeviceResponse { IdFailure, Success, UnAuthorize, NetworkException, ProcessError, InternalError,TaskCancelled };
+
+        public async Task<Dictionary<LinkDeviceResponse, string>> LinkDevice(string jsonData,CancellationToken token)
+        {
+            string responseString = null;
+            Dictionary<LinkDeviceResponse, string> responseDic = new Dictionary<LinkDeviceResponse, string>();
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri(Application.Current.Properties[Constants.APP_DOMAIN_URL_KEY].ToString());
+
+                    var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+                    client.DefaultRequestHeaders.Add("Authorization", "Bearer " + AuthenticationManager.GetInstance().AuthToken);
+                    HttpResponseMessage response = await client.PostAsync("/api/Asset", content,token);
+                    if (response.StatusCode == HttpStatusCode.BadRequest)
+                    {
+                        responseString = JsonConvert.DeserializeObject<ResponseMessageModel>(await response.Content.ReadAsStringAsync()).Message;
+                        responseDic.Add(LinkDeviceResponse.ProcessError, responseString);
+                    }
+                    else if (response.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        responseDic.Add(LinkDeviceResponse.IdFailure, responseString);
+                    }
+                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        await ReAuthorize();//hoping it should always return true
+                        await LinkDevice(jsonData,token);
+                    }
+                    else if (response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.Accepted || response.StatusCode == HttpStatusCode.Created || response.StatusCode == HttpStatusCode.NoContent)
+                    {
+                        responseDic.Add(LinkDeviceResponse.Success, responseString);
+                    }
+                    else
+                    {
+                        responseDic.Add(LinkDeviceResponse.InternalError, responseString);
+                    }
+                    return responseDic;
+                }
+            }
+            catch (TaskCanceledException e)
+            {
+                responseDic.Add(LinkDeviceResponse.TaskCancelled, responseString);
+                return responseDic;
+            }
+            catch (Exception ex)
+            {
+                responseDic.Add(LinkDeviceResponse.NetworkException, responseString);
+                return responseDic;
+            }
+
+        }
+
+        public async Task<string> AuthenticateToken(string accessCode)
+        {
+            string requestUri = B2CConfigManager.GetInstance().GetB2CTokenUrl(accessCode);
+            string strResponse = string.Empty;
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    var content = new StringContent(string.Empty, Encoding.UTF8, "application/json");
+                    HttpResponseMessage response = client.PostAsync(requestUri, content).Result;
+                    if (response.IsSuccessStatusCode)
+                    {
+                        strResponse = await response.Content.ReadAsStringAsync();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return strResponse;
+        }
+
+        public async Task<Dictionary<LinkDeviceResponse, string>> GetSensorTypeFromID(string ID,CancellationToken token)
+        {
+            string responseString = null;
+            Dictionary<LinkDeviceResponse, string> responseDic = new Dictionary<LinkDeviceResponse, string>();
+            try
+            {
+                using (var client = new HttpClient())
+                {
+
+                    client.BaseAddress = new Uri(Application.Current.Properties[Constants.APP_DOMAIN_URL_KEY].ToString());
+                    var content = new StringContent(ID, Encoding.UTF8, "application/json");
+                    client.DefaultRequestHeaders.Add("Authorization", "Bearer " + AuthenticationManager.GetInstance().AuthToken);
+                    HttpResponseMessage response = await client.PostAsync("/api/GetSensorType", content,token);
+                    if (response.StatusCode == HttpStatusCode.BadRequest)
+                    {
+                        responseDic.Add(LinkDeviceResponse.ProcessError, responseString);
+                    }
+                    else if (response.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        responseDic.Add(LinkDeviceResponse.IdFailure, responseString);
+                    }
+                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        await ReAuthorize();//hoping it should always return true
+                        await GetSensorTypeFromID(ID,token);
+                    }
+                    else if (response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.Accepted || response.StatusCode == HttpStatusCode.Created || response.StatusCode == HttpStatusCode.NoContent)
+                    {
+                        responseString = JsonConvert.DeserializeObject<string>(await response.Content.ReadAsStringAsync());
+                        responseDic.Add(LinkDeviceResponse.Success, responseString);
+                    }
+                    else
+                    {
+                        responseDic.Add(LinkDeviceResponse.InternalError, responseString);
+                    }
+                    return responseDic;
+                }
+            }
+            catch (TaskCanceledException ex)
+            {
+                responseDic.Add(LinkDeviceResponse.TaskCancelled, responseString);
+                return responseDic;
+            }
+            catch (Exception e)
+            {
+                responseDic.Add(LinkDeviceResponse.NetworkException, responseString);
+                return responseDic;
+            }
+        }
+        public async Task<Dictionary<LinkDeviceResponse, string>> GetAssetStatus(string assetId,CancellationToken token)
+        {
+            string responseString = null;
+            Dictionary<LinkDeviceResponse, string> responseDic = new Dictionary<LinkDeviceResponse, string>();
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri(Application.Current.Properties[Constants.APP_DOMAIN_URL_KEY].ToString());
+                    var content = new StringContent(assetId, Encoding.UTF8, "application/json");
+                    client.DefaultRequestHeaders.Add("Authorization", "Bearer " + AuthenticationManager.GetInstance().AuthToken);
+                    HttpResponseMessage response = await client.PostAsync("/api/AssetStatus", content,token);
+                    if (response.StatusCode == HttpStatusCode.BadRequest)
+                    {
+                        responseString = JsonConvert.DeserializeObject<ResponseMessageModel>(await response.Content.ReadAsStringAsync()).Message;
+                        responseDic.Add(LinkDeviceResponse.ProcessError, responseString);
+                    }
+                    else if (response.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        responseDic.Add(LinkDeviceResponse.IdFailure, responseString);
+                    }
+                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        await ReAuthorize();//hoping it should always return true
+                        await GetAssetStatus(assetId,token);
+                    }
+                    else if (response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.Accepted || response.StatusCode == HttpStatusCode.Created || response.StatusCode == HttpStatusCode.NoContent)
+                    {
+                        responseString = await response.Content.ReadAsStringAsync();
+                        responseDic.Add(LinkDeviceResponse.Success, responseString);
+                    }
+                    else
+                    {
+                        responseDic.Add(LinkDeviceResponse.InternalError, responseString);
+                    }
+                    return responseDic;
+
+                }
+            }
+            catch (TaskCanceledException ex)
+            {
+                responseDic.Add(LinkDeviceResponse.TaskCancelled, responseString);
+                return responseDic;
+            }
+            catch (Exception e)
+            {
+                responseDic.Add(LinkDeviceResponse.NetworkException, responseString);
+                return responseDic;
+            }
+        }
+
+        public async Task<string> GetB2CConfiguration(string baseAddress)
+        {
+            string responseStr = null;
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri(baseAddress);
+                    HttpResponseMessage response = await client.GetAsync("/api/GetMobileConfiguration");
+                    if (response.IsSuccessStatusCode)
+                    {
+                        responseStr = await response.Content.ReadAsStringAsync();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+
+            }
+            return responseStr;
+
+
+        }
+
+        public async Task<bool> ReAuthorize()
+        {
+            try
+            {
+                Dictionary<AuthenticationManager.AuthResponse, object> response = await AuthenticationManager.GetInstance().AquireTokenSilentAsync();
+                if (response.Count != 0)
+                {
+                    if (response.ContainsKey(AuthenticationManager.AuthResponse.AuthResult))
+                    {
+                        return true;
+                    }
+                    //We might need to add else if if response condition increases
+                    else
+                    {
+                        return await SignInAgain();
+                    }
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                return await SignInAgain();
+            }
+        }
+
+        async Task<bool> SignInAgain()
+        {
+            try
+            {
+                Dictionary<AuthenticationManager.AuthResponse, object> response = await AuthenticationManager.GetInstance().AquireTokenAsync();
+                if (response.Count != 0)
+                {
+                    if (response.ContainsKey(AuthenticationManager.AuthResponse.AuthResult))
+                    {
+                        return true;
+                    }
+                }
+                return await SignInAgain();
+
+            }
+            catch (Exception ex)
+            {
+                return await SignInAgain();
+            }
+        }
+    }
+}

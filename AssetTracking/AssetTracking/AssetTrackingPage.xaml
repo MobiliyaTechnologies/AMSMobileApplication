@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
+		xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+		xmlns:local="clr-namespace:AssetTracking" 
+		x:Class="AssetTracking.AssetTrackingPage">
+
+	<AbsoluteLayout BackgroundColor="#efefef">
+
+        <Image x:Name="BgImage" Source="bg.png"
+               Aspect="AspectFill"
+               AbsoluteLayout.LayoutBounds="0.0, 0.0, 1.0, 0.40"
+               AbsoluteLayout.LayoutFlags="All"/>
+
+		<Label AbsoluteLayout.LayoutBounds="0, 0, 1.0, 0.25"
+             	AbsoluteLayout.LayoutFlags="All"
+				VerticalOptions="EndAndExpand"
+				HorizontalOptions="Center"
+				Margin="30, 15, 30, 30"
+				x:Name="valueLabel"
+			   	Text="Do you want to dispatch or receive shipment?"
+	           	Font="Large"
+				HorizontalTextAlignment="Center"
+	           	TextColor="White"/>
+
+		<Frame AbsoluteLayout.LayoutBounds="0, 0.4, 1.0, 0.35"
+				AbsoluteLayout.LayoutFlags="All"
+				x:Name="DispatchBox"
+				BackgroundColor="White"
+				Padding="10, 10, 10, 10"
+				Margin="20, 15, 20, 0">
+			<StackLayout VerticalOptions="Center">
+				<StackLayout.GestureRecognizers>
+			        <TapGestureRecognizer x:Name="TapGesture" />
+			    </StackLayout.GestureRecognizers>
+                <Image Source="dispatch.png"/>
+                <Label Text="DISPATCH"
+		           	Font="Large"
+						Margin="0,20,0,0"
+					HorizontalTextAlignment="Center"/>
+        	</StackLayout>
+		</Frame>
+
+		<Frame AbsoluteLayout.LayoutBounds="0, 1.0, 1.0, 0.35"
+				AbsoluteLayout.LayoutFlags="All"
+				x:Name="ReceiveBox"
+				BackgroundColor="White"
+				Padding="10, 10, 10, 10"
+				Margin="20, 0, 20, 20">
+			<StackLayout VerticalOptions="Center">
+				<StackLayout.GestureRecognizers>
+			        <TapGestureRecognizer x:Name="TabReceive"/>
+			    </StackLayout.GestureRecognizers>
+                <Image Source="receive.png"/>
+                <Label Text="RECEIVE"
+		           	Font="Large"
+						Margin="0,20,0,0"
+					HorizontalTextAlignment="Center"/>
+        	</StackLayout>
+		</Frame>
+	</AbsoluteLayout>
+</ContentPage>
